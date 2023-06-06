@@ -20,7 +20,7 @@
 	onDestroy(() => unsub());
 </script>
 
-<div>
+<nav>
 	{#if !noNavbarRoutes.includes(pathname)}
 		<Link to="/">Dashboard</Link>
 		<Link to="transactions">Transactions</Link>
@@ -46,4 +46,4 @@
 			</button>
 		{/if}
 	{/if}
-</div>
+</nav>

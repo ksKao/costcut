@@ -12,13 +12,15 @@
 </script>
 
 <Router {url}>
-	<Navbar />
-	<div>
-		<Route path="/" component={Dashboard} />
-		<Route path="transactions" component={Transactions} />
-		<Route path="charts" component={Charts} />
-		<Route path="settings" component={Settings} />
-		<Route path="login" component={Login} />
-		<Route path="register" component={Register} />
+	<div class="flex">
+		<Navbar />
+		<main>
+			<Route path="/" component={Dashboard} />
+			<Route path="transactions" component={Transactions} />
+			<Route path="charts" component={Charts} />
+			<Route path="settings" component={Settings} />
+			<Route path="login" component={Login} />
+			<Route path="register" component={Register} />
+		</main>
 	</div>
 </Router>
