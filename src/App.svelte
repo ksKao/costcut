@@ -6,8 +6,6 @@
 	import Settings from './pages/Settings.svelte';
 	import Login from './pages/Login.svelte';
 	import Register from './pages/Register.svelte';
-	import { onMount, onDestroy } from 'svelte';
-	import { globalHistory } from 'svelte-routing/src/history';
 	import Navbar from './components/Navbar.svelte';
 
 	export let url = '/';

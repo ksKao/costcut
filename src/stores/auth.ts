@@ -3,7 +3,7 @@ import { onAuthStateChanged, type User } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 
 const createUserStore = () => {
-	const { subscribe, set } = writable<User | null>(null);
+	const { subscribe, set } = writable<User | null | undefined>(undefined);
 
 	onAuthStateChanged(auth, (user) => {
 		set(user);
