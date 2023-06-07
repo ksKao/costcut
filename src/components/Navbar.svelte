@@ -3,30 +3,92 @@
 	import { user } from '../stores/auth';
 	import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 	import { auth } from '../lib/firebase';
+	import { LayoutDashboard, ArrowRightLeft, BarChart3, Settings, LogOut, Sun, Moon } from 'lucide-svelte';
+	import { theme } from '../stores/theme';
+
+	let themeButtonChecked = false;
+
+	$: {
+		$theme = themeButtonChecked ? 'light' : 'dark';
+	}
+
+	const navbarItems = [
+		{
+			name: 'Dashboard',
+			path: '/',
+			icon: LayoutDashboard,
+		},
+		{
+			name: 'Transactions',
+			path: '/transactions',
+			icon: ArrowRightLeft,
+		},
+		{
+			name: 'Charts',
+			path: '/charts',
+			icon: BarChart3,
+		},
+		{
+			name: 'Settings',
+			path: '/settings',
+			icon: Settings,
+		},
+	];
 </script>
 
-<nav class="h-screen w-64 bg-base-200">
-	<Link to="/">Dashboard</Link>
-	<Link to="transactions">Transactions</Link>
-	<Link to="charts">Charts</Link>
-	<Link to="settings">Settings</Link>
-
-	{#if $user === undefined}
-		<span> Loading... </span>
-	{:else if $user !== null}
-		<button
-			on:click={() => {
-				signOut(auth);
-			}}>Logout</button
-		>
-		<span> {$user.email} </span>
-	{:else}
-		<button
-			on:click={() => {
-				// login logic here
-			}}
-		>
-			Login
-		</button>
-	{/if}
+<nav class="flex h-screen w-64 flex-col justify-between bg-base-200 p-6">
+	<Link to="/" class="mt-6 flex items-center justify-center gap-4">
+		<img src="/logo.png" alt="logo" class="h-10 w-10" />
+		<h1 class="text-2xl font-bold">Costcut</h1>
+	</Link>
+	<div class="flex flex-col gap-1">
+		{#each navbarItems as navbarItem}
+			<Link to={navbarItem.path} let:active>
+				<div
+					class={`flex w-full items-center gap-4 rounded-md p-4 font-semibold hover:bg-primary hover:text-white ${
+						active ? 'bg-primary text-white' : ''
+					}`}
+				>
+					<svelte:component this={navbarItem.icon} class="h-6 w-6" />
+					<span>{navbarItem.name}</span>
+				</div>
+			</Link>
+		{/each}
+	</div>
+	<div>
+		<div class="divider" />
+		<div class="flex h-10 w-full items-center justify-center">
+			<!-- <button bind:this={toggleThemeButton} data-toggle-theme="dark,light" data-act-class="ACTIVECLASS" /> -->
+			<label class="swap swap-rotate">
+				<input type="checkbox" bind:checked={themeButtonChecked} />
+				<Sun class="swap-on fill-current" />
+				<Moon class="swap-off fill-current" />
+			</label>
+			<!-- {#if true} -->
+			{#if $user === undefined}
+				<span class="loading loading-spinner" />
+			{:else if $user !== null}
+				<div class="flex w-full items-center justify-between">
+					<span class="overflow-ellipsis"> {$user.displayName ?? $user.email.split('@')[0]} </span>
+					<button
+						on:click={() => {
+							signOut(auth);
+						}}
+						class="btn-circle btn"
+					>
+						<LogOut />
+					</button>
+				</div>
+			{:else}
+				<button
+					class="btn-primary btn"
+					on:click={() => {
+						// login logic here
+					}}
+				>
+					Login
+				</button>
+			{/if}
+		</div>
+	</div>
 </nav>
