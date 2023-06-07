@@ -57,19 +57,21 @@
 	</div>
 	<div>
 		<div class="divider" />
-		<div class="flex h-10 w-full items-center justify-center">
-			<!-- <button bind:this={toggleThemeButton} data-toggle-theme="dark,light" data-act-class="ACTIVECLASS" /> -->
+		<div class="flex h-10 w-full items-center justify-between gap-4">
+			<!-- Theme switcher -->
 			<label class="swap swap-rotate">
 				<input type="checkbox" bind:checked={themeButtonChecked} />
 				<Sun class="swap-on fill-current" />
 				<Moon class="swap-off fill-current" />
 			</label>
-			<!-- {#if true} -->
+			<!-- User -->
 			{#if $user === undefined}
 				<span class="loading loading-spinner" />
 			{:else if $user !== null}
-				<div class="flex w-full items-center justify-between">
-					<span class="overflow-ellipsis"> {$user.displayName ?? $user.email.split('@')[0]} </span>
+				<div class="flex flex-grow items-center justify-between">
+					<span class="w-20 flex-grow overflow-hidden overflow-ellipsis text-center">
+						{$user.displayName ?? $user.email.split('@')[0]}
+					</span>
 					<button
 						on:click={() => {
 							signOut(auth);
@@ -81,9 +83,9 @@
 				</div>
 			{:else}
 				<button
-					class="btn-primary btn"
-					on:click={() => {
-						// login logic here
+					class="btn-primary btn flex-grow"
+					on:click={async () => {
+						await signInWithEmailAndPassword(auth, 'kaokaisiang021001@gmail.com', '123456');
 					}}
 				>
 					Login

@@ -5,12 +5,6 @@
 	import Charts from './pages/Charts.svelte';
 	import Settings from './pages/Settings.svelte';
 	import Navbar from './components/Navbar.svelte';
-	import { onMount } from 'svelte';
-	import { themeChange } from 'theme-change';
-
-	onMount(() => {
-		themeChange(false);
-	});
 
 	export let url = '/';
 </script>
