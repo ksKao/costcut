@@ -5,6 +5,8 @@
 	import { auth } from '../lib/firebase';
 	import { LayoutDashboard, ArrowRightLeft, BarChart3, Settings, LogOut, Sun, Moon } from 'lucide-svelte';
 	import { theme } from '../stores/theme';
+	import Modal from './Modal.svelte';
+	import Auth from './Auth.svelte';
 
 	let themeButtonChecked = false;
 
@@ -59,7 +61,7 @@
 		<div class="divider" />
 		<div class="flex h-10 w-full items-center justify-between gap-4">
 			<!-- Theme switcher -->
-			<label class="swap swap-rotate">
+			<label class="swap-rotate swap">
 				<input type="checkbox" bind:checked={themeButtonChecked} />
 				<Sun class="swap-on fill-current" />
 				<Moon class="swap-off fill-current" />
@@ -82,14 +84,10 @@
 					</button>
 				</div>
 			{:else}
-				<button
-					class="btn-primary btn flex-grow"
-					on:click={async () => {
-						await signInWithEmailAndPassword(auth, 'kaokaisiang021001@gmail.com', '123456');
-					}}
-				>
-					Login
-				</button>
+				<Modal buttonClassName="flex-grow">
+					<svelte:fragment slot="button">Login</svelte:fragment>
+					<Auth />
+				</Modal>
 			{/if}
 		</div>
 	</div>
