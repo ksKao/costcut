@@ -1,14 +1,23 @@
 <script lang="ts">
 	import { Link } from 'svelte-routing';
 	import { user } from '../stores/auth';
-	import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+	import { signOut } from 'firebase/auth';
 	import { auth } from '../lib/firebase';
-	import { LayoutDashboard, ArrowRightLeft, BarChart3, Settings, LogOut, Sun, Moon } from 'lucide-svelte';
+	import {
+		LayoutDashboard,
+		ArrowRightLeft,
+		BarChart3,
+		Settings,
+		LogOut,
+		Sun,
+		Moon,
+	} from 'lucide-svelte';
 	import { theme } from '../stores/theme';
 	import Modal from './Modal.svelte';
 	import Auth from './Auth.svelte';
+	import { onMount } from 'svelte';
 
-	let themeButtonChecked = false;
+	let themeButtonChecked = $theme === 'light';
 
 	$: {
 		$theme = themeButtonChecked ? 'light' : 'dark';
@@ -61,18 +70,20 @@
 		<div class="divider" />
 		<div class="flex h-10 w-full items-center justify-between gap-4">
 			<!-- Theme switcher -->
-			<label class="swap-rotate swap">
+			<label class="swap swap-rotate">
 				<input type="checkbox" bind:checked={themeButtonChecked} />
 				<Sun class="swap-on fill-current" />
 				<Moon class="swap-off fill-current" />
 			</label>
 			<!-- User -->
 			{#if $user === undefined}
-				<span class="loading loading-spinner" />
+				<div class="flex flex-grow items-center justify-center">
+					<span class="loading loading-spinner" />
+				</div>
 			{:else if $user !== null}
 				<div class="flex flex-grow items-center justify-between">
 					<span class="w-20 flex-grow overflow-hidden overflow-ellipsis text-center">
-						{$user.displayName ?? $user.email.split('@')[0]}
+						{$user.displayName ?? $user.email?.split('@')[0] ?? 'User'}
 					</span>
 					<button
 						on:click={() => {

@@ -21,5 +21,5 @@ export const theme = writable<'light' | 'dark'>(getDefaultTheme());
 
 theme.subscribe((value) => {
 	localStorage.setItem('theme', value);
-	document.querySelector('html').setAttribute('data-theme', value);
-})
+	document.querySelector('html')?.setAttribute('data-theme', value);
+});

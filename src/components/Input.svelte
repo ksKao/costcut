@@ -7,8 +7,6 @@
 		label?: string;
 	}
 
-	console.log($$restProps);
-
 	export let errorMessage = '';
 	export let label = '';
 	export let value = '';
