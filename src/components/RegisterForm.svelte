@@ -7,7 +7,6 @@
 		AuthErrorCodes,
 		createUserWithEmailAndPassword,
 		sendEmailVerification,
-		signOut,
 	} from 'firebase/auth';
 	import { auth } from '../lib/firebase';
 	import { FirebaseError } from 'firebase/app';
@@ -18,9 +17,9 @@
 		passwordConfirm: '',
 	};
 
-	let email = 'kaokaisiang147@gmail.com';
-	let password = '123456';
-	let passwordConfirm = '123456';
+	let email = '';
+	let password = '';
+	let passwordConfirm = '';
 	let isLoading = false;
 	let error = {
 		email: '',
@@ -89,7 +88,6 @@
 				alert.type = 'success';
 				alert.message = 'Please check your email to verify your account.';
 			}
-			await signOut(auth);
 			email = '';
 			password = '';
 			passwordConfirm = '';
