@@ -2,7 +2,7 @@
 	import { AuthErrorCodes, signInWithEmailAndPassword, type AuthError } from 'firebase/auth';
 	import Button from './Button.svelte';
 	import Input from './Input.svelte';
-	import { ZodError, z } from 'zod';
+	import { z } from 'zod';
 	import { auth } from '../lib/firebase';
 	import { FirebaseError } from 'firebase/app';
 	import { AlertCircle } from 'lucide-svelte';
@@ -17,6 +17,8 @@
 	let email = '';
 	let password = '';
 	let error = { ...emptyError };
+
+	export let modal: HTMLDialogElement;
 
 	const schema = z.object({
 		email: z
@@ -47,6 +49,9 @@
 		try {
 			isLoading = true;
 			await signInWithEmailAndPassword(auth, email, password);
+			email = '';
+			password = '';
+			modal.close();
 		} catch (e) {
 			if (e instanceof FirebaseError) {
 				switch (e.code) {
@@ -61,6 +66,8 @@
 						error.general = 'Something went wrong. Please try again.';
 						break;
 				}
+			} else {
+				error.general = 'Something went wrong. Please try again.';
 			}
 		} finally {
 			isLoading = false;

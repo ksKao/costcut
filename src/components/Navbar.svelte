@@ -15,9 +15,9 @@
 	import { theme } from '../stores/theme';
 	import Modal from './Modal.svelte';
 	import Auth from './Auth.svelte';
-	import { onMount } from 'svelte';
 
 	let themeButtonChecked = $theme === 'light';
+	let modal: HTMLDialogElement;
 
 	$: {
 		$theme = themeButtonChecked ? 'light' : 'dark';
@@ -94,12 +94,12 @@
 						<LogOut />
 					</button>
 				</div>
-			{:else}
-				<Modal buttonClassName="flex-grow">
-					<svelte:fragment slot="button">Login</svelte:fragment>
-					<Auth />
-				</Modal>
+				<!-- {:else} -->
 			{/if}
+			<Modal buttonClassName={`flex-grow ${$user === null ? 'block' : 'hidden'}`} bind:modal>
+				<svelte:fragment slot="button">Login</svelte:fragment>
+				<Auth {modal} />
+			</Modal>
 		</div>
 	</div>
 </nav>

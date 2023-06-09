@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { twMerge } from 'tailwind-merge';
 
-	let modal: HTMLDialogElement;
-
 	export let buttonClassName = '';
+	export let modal: HTMLDialogElement;
 </script>
 
 <button class={twMerge('btn-primary btn', buttonClassName)} on:click={() => modal.showModal()}>

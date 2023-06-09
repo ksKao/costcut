@@ -3,10 +3,14 @@
 	import RegisterForm from './RegisterForm.svelte';
 
 	let selectedTab: 'login' | 'register' = 'login';
+	export let modal: HTMLDialogElement;
 </script>
 
 <div class="tabs tabs-boxed w-full">
-	<button class={`tab w-1/2 ${selectedTab === 'login' ? 'tab-active' : ''}`} on:click={() => (selectedTab = 'login')}>
+	<button
+		class={`tab w-1/2 ${selectedTab === 'login' ? 'tab-active' : ''}`}
+		on:click={() => (selectedTab = 'login')}
+	>
 		Login
 	</button>
 	<button
@@ -18,7 +22,7 @@
 </div>
 
 {#if selectedTab === 'login'}
-	<LoginForm />
+	<LoginForm {modal} />
 {:else}
 	<RegisterForm />
 {/if}
