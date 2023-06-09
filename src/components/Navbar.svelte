@@ -42,7 +42,7 @@
 	];
 
 	let themeButtonChecked = $theme === 'light';
-	let modal: HTMLDialogElement;
+	// let modal: HTMLDialogElement;
 
 	$: {
 		$theme = themeButtonChecked ? 'light' : 'dark';
@@ -99,12 +99,9 @@
 						</button>
 					</div>
 				{/if}
-				<Modal
-					buttonClassName={`flex-grow ${$user === null ? 'block' : 'hidden'}`}
-					bind:modal
-				>
+				<Modal buttonClassName={`flex-grow ${$user === null ? 'block' : 'hidden'}`}>
 					<svelte:fragment slot="button">Login</svelte:fragment>
-					<Auth {modal} />
+					<Auth />
 				</Modal>
 			</div>
 		</div>

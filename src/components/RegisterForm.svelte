@@ -10,12 +10,15 @@
 	} from 'firebase/auth';
 	import { auth } from '../lib/firebase';
 	import { FirebaseError } from 'firebase/app';
+	import { getContext, onMount, onDestroy } from 'svelte';
+	import type { Writable } from 'svelte/store';
 
 	const emptyError = {
 		email: '',
 		password: '',
 		passwordConfirm: '',
 	};
+	const modal = getContext<Writable<HTMLDialogElement | undefined>>('modal');
 
 	let email = '';
 	let password = '';
@@ -115,6 +118,21 @@
 			isLoading = false;
 		}
 	};
+
+	const clearForm = () => {
+		email = '';
+		password = '';
+		passwordConfirm = '';
+		error = { ...emptyError };
+		alert = {
+			message: '',
+			type: 'success',
+		};
+	};
+
+	onMount(() => $modal?.addEventListener('close', clearForm));
+
+	onDestroy(() => $modal?.removeEventListener('close', clearForm));
 </script>
 
 <h1 class="my-4 w-full text-center text-xl font-bold">Register</h1>

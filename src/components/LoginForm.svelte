@@ -1,25 +1,20 @@
 <script lang="ts">
-	import { AuthErrorCodes, signInWithEmailAndPassword, type AuthError } from 'firebase/auth';
+	import { AuthErrorCodes, signInWithEmailAndPassword } from 'firebase/auth';
 	import Button from './Button.svelte';
 	import Input from './Input.svelte';
 	import { z } from 'zod';
 	import { auth } from '../lib/firebase';
 	import { FirebaseError } from 'firebase/app';
 	import { AlertCircle } from 'lucide-svelte';
+	import { getContext, onDestroy, onMount } from 'svelte';
+	import type { Writable } from 'svelte/store';
 
 	const emptyError = {
 		email: '',
 		password: '',
 		general: '',
 	};
-
-	let isLoading = false;
-	let email = '';
-	let password = '';
-	let error = { ...emptyError };
-
-	export let modal: HTMLDialogElement;
-
+	const modal = getContext<Writable<HTMLDialogElement | undefined>>('modal');
 	const schema = z.object({
 		email: z
 			.string()
@@ -27,6 +22,11 @@
 			.email({ message: 'Invalid email' }),
 		password: z.string().min(1, { message: 'Password is required' }),
 	});
+
+	let isLoading = false;
+	let email = '';
+	let password = '';
+	let error = { ...emptyError };
 
 	const handleSubmit = async () => {
 		error = { ...emptyError };
@@ -52,7 +52,7 @@
 			email = '';
 			password = '';
 			error = { ...emptyError };
-			modal.close();
+			$modal?.close();
 		} catch (e) {
 			if (e instanceof FirebaseError) {
 				switch (e.code) {
@@ -74,6 +74,16 @@
 			isLoading = false;
 		}
 	};
+
+	const clearForm = () => {
+		email = '';
+		password = '';
+		error = { ...emptyError };
+	};
+
+	onMount(() => $modal?.addEventListener('close', clearForm));
+
+	onDestroy(() => $modal?.removeEventListener('close', clearForm));
 </script>
 
 <h1 class="my-4 w-full text-center text-xl font-bold">Login</h1>

@@ -8,9 +8,6 @@
 
 	onMount(async () => {
 		const queryObject = Object.fromEntries(new URLSearchParams($querystring).entries());
-		// if (queryObject['code']) {
-		// 	console.log(queryObject['code']);
-		// }
 		const code = queryObject['code'];
 
 		const res = await fetch(
