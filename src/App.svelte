@@ -6,6 +6,7 @@
 	import Navbar from './components/Navbar.svelte';
 	import EmailVerification from './pages/EmailVerification.svelte';
 	import Router from 'svelte-spa-router';
+	import { querystring, replace } from 'svelte-spa-router';
 
 	const routes = {
 		'/': Dashboard,
@@ -14,11 +15,18 @@
 		'/settings': Settings,
 		'/email-verification': EmailVerification,
 	};
+
+	$: {
+		const queryObject = Object.fromEntries(new URLSearchParams($querystring).entries());
+		if (queryObject['mode'] === 'verifyEmail' && queryObject['oobCode']) {
+			replace(`/email-verification?code=${queryObject['oobCode']}`);
+		}
+	}
 </script>
 
 <div class="flex">
 	<Navbar />
-	<main>
+	<main class="flex-grow">
 		<Router {routes} />
 	</main>
 </div>

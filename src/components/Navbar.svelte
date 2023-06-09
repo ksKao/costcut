@@ -50,7 +50,7 @@
 </script>
 
 {#if !noNavbarRoutes.includes($location)}
-	<nav class="flex h-screen w-64 flex-col justify-between bg-base-200 p-6">
+	<nav class="flex min-h-screen min-w-[256px] flex-col justify-between bg-base-200 p-6">
 		<a href="/" class="mt-6 flex items-center justify-center gap-4" use:link>
 			<img src="/logo.png" alt="logo" class="h-10 w-10" />
 			<h1 class="text-2xl font-bold">Costcut</h1>

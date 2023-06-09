@@ -51,6 +51,7 @@
 			await signInWithEmailAndPassword(auth, email, password);
 			email = '';
 			password = '';
+			error = { ...emptyError };
 			modal.close();
 		} catch (e) {
 			if (e instanceof FirebaseError) {
