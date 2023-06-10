@@ -42,7 +42,6 @@
 	];
 
 	let themeButtonChecked = $theme === 'light';
-	// let modal: HTMLDialogElement;
 
 	$: {
 		$theme = themeButtonChecked ? 'light' : 'dark';

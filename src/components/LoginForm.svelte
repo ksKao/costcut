@@ -28,6 +28,8 @@
 	let password = '';
 	let error = { ...emptyError };
 
+	export let switchTabToPasswordReset: () => void;
+
 	const handleSubmit = async () => {
 		error = { ...emptyError };
 
@@ -109,6 +111,15 @@
 		label="Password"
 		id="password"
 		bind:value={password}
-	/>
-	<Button class="w-full" {isLoading}>Login</Button>
+	>
+		<button
+			type="button"
+			on:click={switchTabToPasswordReset}
+			class="link-primary link font-semibold"
+			slot="bottom-right"
+		>
+			Forgot Password?
+		</button>
+	</Input>
+	<Button class="mt-6 w-full" {isLoading}>Login</Button>
 </form>

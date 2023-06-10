@@ -66,6 +66,10 @@
 
 	const handleSubmit = async () => {
 		error = { ...emptyError };
+		alert = {
+			message: '',
+			type: 'success',
+		};
 
 		const parsedInput = schema.safeParse({
 			email,
@@ -167,5 +171,5 @@
 		errorMessage={error.passwordConfirm}
 		bind:value={passwordConfirm}
 	/>
-	<Button class="w-full" {isLoading}>Register</Button>
+	<Button class="mt-6 w-full" {isLoading}>Register</Button>
 </form>

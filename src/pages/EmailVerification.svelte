@@ -46,16 +46,7 @@
 				{message}
 			</div>
 			<div class="card-actions justify-center">
-				<button
-					class="btn-primary btn"
-					on:click={() =>
-						replace('/').then(() =>
-							// refresh the page to update verified status
-							replace('/')
-						)}
-				>
-					Dashboard
-				</button>
+				<button class="btn-primary btn" on:click={() => replace('/')}> Dashboard </button>
 			</div>
 		{/if}
 	</div>

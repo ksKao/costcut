@@ -1,8 +1,9 @@
 <script lang="ts">
 	import LoginForm from './LoginForm.svelte';
+	import PasswordResetForm from './PasswordResetForm.svelte';
 	import RegisterForm from './RegisterForm.svelte';
 
-	let selectedTab: 'login' | 'register' = 'login';
+	let selectedTab: 'login' | 'register' | 'password-reset' = 'login';
 </script>
 
 <div class="tabs tabs-boxed w-full">
@@ -21,7 +22,9 @@
 </div>
 
 {#if selectedTab === 'login'}
-	<LoginForm />
-{:else}
+	<LoginForm switchTabToPasswordReset={() => (selectedTab = 'password-reset')} />
+{:else if selectedTab === 'register'}
 	<RegisterForm />
+{:else if selectedTab === 'password-reset'}
+	<PasswordResetForm />
 {/if}
