@@ -9,7 +9,7 @@
 	import { auth } from '../lib/firebase';
 	import { FirebaseError } from 'firebase/app';
 
-	const modal = getContext<Writable<HTMLDialogElement | undefined>>('modal');
+	const authModalStore = getContext<Writable<HTMLDialogElement | undefined>>('authModalStore');
 	const schema = z
 		.string()
 		.min(1, { message: 'Email is required' })
@@ -77,8 +77,8 @@
 		alert.message = '';
 	};
 
-	onMount(() => $modal?.addEventListener('close', clearForm));
-	onDestroy(() => $modal?.removeEventListener('close', clearForm));
+	onMount(() => $authModalStore?.addEventListener('close', clearForm));
+	onDestroy(() => $authModalStore?.removeEventListener('close', clearForm));
 </script>
 
 <h1 class="my-4 w-full text-center text-xl font-bold">Password Reset</h1>

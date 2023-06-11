@@ -6,9 +6,13 @@
 	import Navbar from './components/Navbar.svelte';
 	import EmailVerification from './pages/EmailVerification.svelte';
 	import Router from 'svelte-spa-router';
-	import { querystring, replace } from 'svelte-spa-router';
+	import { querystring, replace, location } from 'svelte-spa-router';
 	import PasswordReset from './pages/PasswordReset.svelte';
+	import Auth from './components/Auth.svelte';
+	import { onMount, onDestroy, setContext } from 'svelte';
+	import { writable } from 'svelte/store';
 
+	const noNavbarRoutes = ['/password-reset', '/email-verification'];
 	const routes = {
 		'/': Dashboard,
 		'/transactions': Transactions,
@@ -17,6 +21,13 @@
 		'/email-verification': EmailVerification,
 		'/password-reset': PasswordReset,
 	};
+
+	let authModal: HTMLDialogElement | undefined = undefined;
+	const authModalStore = writable<HTMLDialogElement | undefined>(authModal);
+
+	$: authModalStore.set(authModal);
+
+	setContext('authModalStore', authModalStore);
 
 	$: {
 		const queryObject = Object.fromEntries(new URLSearchParams($querystring).entries());
@@ -29,8 +40,23 @@
 </script>
 
 <div class="flex">
-	<Navbar />
-	<main class="flex-grow">
-		<Router {routes} />
-	</main>
+	{#if !noNavbarRoutes.includes($location)}
+		<dialog class="modal" bind:this={authModal}>
+			<div class="modal-box">
+				<Auth />
+			</div>
+			<form method="dialog" class="modal-backdrop">
+				<button>close</button>
+			</form>
+		</dialog>
+		<Navbar>
+			<main class="flex-grow">
+				<Router {routes} />
+			</main>
+		</Navbar>
+	{:else}
+		<main class="flex-grow">
+			<Router {routes} />
+		</main>
+	{/if}
 </div>

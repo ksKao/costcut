@@ -18,7 +18,7 @@
 		password: '',
 		passwordConfirm: '',
 	};
-	const modal = getContext<Writable<HTMLDialogElement | undefined>>('modal');
+	const authModalStore = getContext<Writable<HTMLDialogElement | undefined>>('authModalStore');
 
 	let email = '';
 	let password = '';
@@ -134,9 +134,9 @@
 		};
 	};
 
-	onMount(() => $modal?.addEventListener('close', clearForm));
+	onMount(() => $authModalStore?.addEventListener('close', clearForm));
 
-	onDestroy(() => $modal?.removeEventListener('close', clearForm));
+	onDestroy(() => $authModalStore?.removeEventListener('close', clearForm));
 </script>
 
 <h1 class="my-4 w-full text-center text-xl font-bold">Register</h1>

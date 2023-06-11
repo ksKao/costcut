@@ -14,7 +14,7 @@
 		password: '',
 		general: '',
 	};
-	const modal = getContext<Writable<HTMLDialogElement | undefined>>('modal');
+	const authModalStore = getContext<Writable<HTMLDialogElement | undefined>>('authModalStore');
 	const schema = z.object({
 		email: z
 			.string()
@@ -54,7 +54,7 @@
 			email = '';
 			password = '';
 			error = { ...emptyError };
-			$modal?.close();
+			$authModalStore?.close();
 		} catch (e) {
 			if (e instanceof FirebaseError) {
 				switch (e.code) {
@@ -83,9 +83,9 @@
 		error = { ...emptyError };
 	};
 
-	onMount(() => $modal?.addEventListener('close', clearForm));
+	onMount(() => $authModalStore?.addEventListener('close', clearForm));
 
-	onDestroy(() => $modal?.removeEventListener('close', clearForm));
+	onDestroy(() => $authModalStore?.removeEventListener('close', clearForm));
 </script>
 
 <h1 class="my-4 w-full text-center text-xl font-bold">Login</h1>
