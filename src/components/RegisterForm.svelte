@@ -8,10 +8,11 @@
 		createUserWithEmailAndPassword,
 		sendEmailVerification,
 	} from 'firebase/auth';
-	import { auth } from '../lib/firebase';
+	import { auth, db } from '../lib/firebase';
 	import { FirebaseError } from 'firebase/app';
 	import { getContext, onMount, onDestroy } from 'svelte';
 	import type { Writable } from 'svelte/store';
+	import { doc, setDoc } from 'firebase/firestore';
 
 	const emptyError = {
 		email: '',
@@ -89,8 +90,9 @@
 
 		try {
 			isLoading = true;
-			await createUserWithEmailAndPassword(auth, email, password);
+			const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
 			if (auth.currentUser) {
+				await setDoc(doc(db, 'users', userCredentials.user.uid), {});
 				await sendEmailVerification(auth.currentUser);
 				alert.type = 'success';
 				alert.message = 'Please check your email to verify your account.';

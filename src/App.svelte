@@ -9,7 +9,7 @@
 	import { querystring, replace, location } from 'svelte-spa-router';
 	import PasswordReset from './pages/PasswordReset.svelte';
 	import Auth from './components/Auth.svelte';
-	import { onMount, onDestroy, setContext } from 'svelte';
+	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
 
 	const noNavbarRoutes = ['/password-reset', '/email-verification'];
