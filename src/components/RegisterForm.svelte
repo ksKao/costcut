@@ -8,18 +8,17 @@
 		createUserWithEmailAndPassword,
 		sendEmailVerification,
 	} from 'firebase/auth';
-	import { auth, db } from '../lib/firebase';
+	import { auth } from '../lib/firebase';
 	import { FirebaseError } from 'firebase/app';
-	import { getContext, onMount, onDestroy } from 'svelte';
-	import type { Writable } from 'svelte/store';
-	import { doc, setDoc } from 'firebase/firestore';
+	import { getContext } from 'svelte';
+	import type { createDialog } from 'svelte-headlessui';
 
 	const emptyError = {
 		email: '',
 		password: '',
 		passwordConfirm: '',
 	};
-	const authModalStore = getContext<Writable<HTMLDialogElement | undefined>>('authModalStore');
+	const authModal = getContext<ReturnType<typeof createDialog>>('authModal');
 
 	let email = '';
 	let password = '';
@@ -90,9 +89,8 @@
 
 		try {
 			isLoading = true;
-			const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+			await createUserWithEmailAndPassword(auth, email, password);
 			if (auth.currentUser) {
-				await setDoc(doc(db, 'users', userCredentials.user.uid), {});
 				await sendEmailVerification(auth.currentUser);
 				alert.type = 'success';
 				alert.message = 'Please check your email to verify your account.';
@@ -136,9 +134,7 @@
 		};
 	};
 
-	onMount(() => $authModalStore?.addEventListener('close', clearForm));
-
-	onDestroy(() => $authModalStore?.removeEventListener('close', clearForm));
+	$: if ($authModal.expanded) clearForm();
 </script>
 
 <h1 class="my-4 w-full text-center text-xl font-bold">Register</h1>

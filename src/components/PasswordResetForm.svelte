@@ -2,14 +2,14 @@
 	import { AlertCircle } from 'lucide-svelte';
 	import Button from './Button.svelte';
 	import Input from './Input.svelte';
-	import { onMount, getContext, onDestroy } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import { getContext } from 'svelte';
 	import { z } from 'zod';
 	import { AuthErrorCodes, sendPasswordResetEmail } from 'firebase/auth';
 	import { auth } from '../lib/firebase';
 	import { FirebaseError } from 'firebase/app';
+	import type { createDialog } from 'svelte-headlessui';
 
-	const authModalStore = getContext<Writable<HTMLDialogElement | undefined>>('authModalStore');
+	const authModal = getContext<ReturnType<typeof createDialog>>('authModal');
 	const schema = z
 		.string()
 		.min(1, { message: 'Email is required' })
@@ -77,8 +77,7 @@
 		alert.message = '';
 	};
 
-	onMount(() => $authModalStore?.addEventListener('close', clearForm));
-	onDestroy(() => $authModalStore?.removeEventListener('close', clearForm));
+	$: if (!$authModal.expanded) clearForm();
 </script>
 
 <h1 class="my-4 w-full text-center text-xl font-bold">Password Reset</h1>

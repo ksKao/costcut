@@ -6,15 +6,15 @@
 	import { auth } from '../lib/firebase';
 	import { FirebaseError } from 'firebase/app';
 	import { AlertCircle } from 'lucide-svelte';
-	import { getContext, onDestroy, onMount } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import { getContext } from 'svelte';
+	import type { createDialog } from 'svelte-headlessui';
 
 	const emptyError = {
 		email: '',
 		password: '',
 		general: '',
 	};
-	const authModalStore = getContext<Writable<HTMLDialogElement | undefined>>('authModalStore');
+	const authModal = getContext<ReturnType<typeof createDialog>>('authModal');
 	const schema = z.object({
 		email: z
 			.string()
@@ -54,7 +54,7 @@
 			email = '';
 			password = '';
 			error = { ...emptyError };
-			$authModalStore?.close();
+			authModal.close();
 		} catch (e) {
 			if (e instanceof FirebaseError) {
 				switch (e.code) {
@@ -83,9 +83,7 @@
 		error = { ...emptyError };
 	};
 
-	onMount(() => $authModalStore?.addEventListener('close', clearForm));
-
-	onDestroy(() => $authModalStore?.removeEventListener('close', clearForm));
+	$: if ($authModal.expanded) clearForm();
 </script>
 
 <h1 class="my-4 w-full text-center text-xl font-bold">Login</h1>

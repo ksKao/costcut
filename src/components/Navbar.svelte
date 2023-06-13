@@ -16,7 +16,7 @@
 	import { link } from 'svelte-spa-router';
 	import active from 'svelte-spa-router/active';
 	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import { createDialog } from 'svelte-headlessui';
 
 	const navbarItems = [
 		{
@@ -41,13 +41,11 @@
 		},
 	];
 
-	const authModalStore = getContext<Writable<HTMLDialogElement | undefined>>('authModalStore');
+	const authModal = getContext<ReturnType<typeof createDialog>>('authModal');
 
 	let themeButtonChecked = $theme === 'light';
 
-	$: {
-		$theme = themeButtonChecked ? 'light' : 'dark';
-	}
+	$: $theme = themeButtonChecked ? 'light' : 'dark';
 </script>
 
 <div class="drawer lg:drawer-open">
@@ -117,7 +115,7 @@
 					<button
 						class={`btn-primary btn flex-grow ${$user === null ? 'block' : 'hidden'}`}
 						on:click={() => {
-							$authModalStore?.showModal();
+							authModal.open();
 						}}
 					>
 						Login

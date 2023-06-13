@@ -12,7 +12,10 @@
 <button
 	on:click
 	{...$$restProps}
-	class={twMerge('btn-primary btn disabled:bg-primary/60 disabled:text-primary-content/60', $$restProps.class)}
+	class={twMerge(
+		'btn-primary btn disabled:bg-primary/60 disabled:text-primary-content/60',
+		$$restProps.class
+	)}
 	disabled={$$restProps.disabled || isLoading}
 >
 	{#if isLoading}

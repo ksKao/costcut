@@ -20,11 +20,11 @@
 		</span>
 	</label>
 	<input
+		{...$$restProps}
 		class={twMerge(
 			`input w-full ${errorMessage ? 'input-error' : 'input-bordered'}`,
 			$$restProps.class
 		)}
-		{...$$restProps}
 		bind:value
 	/>
 	<label class="label" for={$$restProps.id}>
