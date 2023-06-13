@@ -37,7 +37,7 @@
 				}}
 			>
 				<div
-					class={`w-full max-w-md transform overflow-hidden rounded-2xl bg-base-100 p-6 text-left align-middle shadow-xl transition-all ${
+					class={`w-full max-w-md transform rounded-2xl bg-base-100 p-6 text-left align-middle shadow-xl transition-all ${
 						$theme === 'dark' ? 'text-white' : 'text-black'
 					}`}
 					use:modal.modal

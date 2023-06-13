@@ -7,6 +7,7 @@
 	import Input from '../components/Input.svelte';
 	import { createCombobox } from 'svelte-headlessui';
 	import Transition from 'svelte-transition';
+	import { Check, ChevronDown } from 'lucide-svelte';
 
 	const combobox = createCombobox();
 	const categories = ['Food', 'Entertainment', 'Transportation', 'Shopping', 'Other'];
@@ -83,31 +84,71 @@
 				bind:value={date}
 			/>
 		</div>
-		<input
-			use:combobox.input
-			on:select={onSelectCategory}
-			class="input-bordered input"
-			value={$combobox.selected}
-			placeholder="Category"
-		/>
-		<button use:combobox.button type="button"> v </button>
-		<!-- {#if $combobox.expanded} -->
-		<Transition
-			show={$combobox.expanded}
-			leave="transition ease-in duration-100"
-			leaveFrom="opacity-100"
-			leaveTo="opacity-0"
-			on:after-leave={() => combobox.reset()}
-		>
-			<ul use:combobox.items>
-				{#each filtered as value}
-					<li use:combobox.item={{ value }}>{value}</li>
-				{:else}
-					<li>No results found</li>
-				{/each}
-			</ul>
-		</Transition>
-		<!-- {/if} -->
-		<Button type="submit">Add Transaction</Button>
+		<div class="form-control relative w-1/2">
+			<label class="label" for="id">
+				<span class="label-text">Category</span>
+			</label>
+			<div class="relative w-full">
+				<input
+					use:combobox.input
+					on:select={onSelectCategory}
+					class="input-bordered input w-full overflow-hidden overflow-ellipsis pr-6"
+					value={$combobox.selected}
+					placeholder="Category"
+					id="category"
+				/>
+				<button
+					use:combobox.button
+					type="button"
+					class="absolute right-2 top-0 translate-y-1/2"
+				>
+					<ChevronDown />
+				</button>
+				<Transition
+					show={$combobox.expanded}
+					enter="transition ease-out duration-100"
+					enterFrom="opacity-0"
+					enterTo="opacity-100"
+					leave="transition ease-in duration-100"
+					leaveFrom="opacity-100"
+					leaveTo="opacity-0"
+					on:after-leave={() => combobox.reset()}
+				>
+					<ul
+						use:combobox.items
+						class="absolute mt-2 w-full overflow-hidden rounded-md bg-base-100 p-1 shadow-md shadow-black"
+					>
+						{#each filtered as value}
+							{@const active = $combobox.active === value}
+							{@const selected = $combobox.selected === value}
+							<li
+								use:combobox.item={{ value }}
+								class={`flex w-full cursor-default items-center justify-between rounded-md p-2 ${
+									active ? 'bg-primary' : ''
+								}`}
+							>
+								<span
+									class="max-w-[80%] flex-grow overflow-hidden overflow-ellipsis"
+									>{value}</span
+								>
+								{#if selected}
+									<span class=""><Check /></span>
+								{/if}
+							</li>
+						{:else}
+							<li
+								class="flex w-full cursor-default items-center justify-between rounded-md p-2"
+							>
+								No results found
+							</li>
+						{/each}
+					</ul>
+				</Transition>
+			</div>
+			<label class="label" for="category">
+				<span class="label-text-alt">Bottom Left label</span>
+			</label>
+		</div>
+		<Button type="submit" class="mt-4 w-full">Add Transaction</Button>
 	</form>
 </Modal>
