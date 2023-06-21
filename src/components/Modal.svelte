@@ -7,9 +7,10 @@
 	import { fade, scale } from 'svelte/transition';
 
 	export let buttonClassName = '';
+	export let key;
 	const modal = createDialog();
 
-	setContext('modal', modal);
+	setContext(key, modal);
 </script>
 
 <button

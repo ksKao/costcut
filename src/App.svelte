@@ -13,6 +13,7 @@
 	import { createDialog } from 'svelte-headlessui';
 	import { theme } from './stores/theme';
 	import { fade, scale } from 'svelte/transition';
+	import { Toaster } from 'svelte-french-toast';
 
 	const noNavbarRoutes = ['/password-reset', '/email-verification'];
 	const routes = {
@@ -38,6 +39,7 @@
 	}
 </script>
 
+<Toaster />
 <div class="flex">
 	{#if !noNavbarRoutes.includes($location)}
 		<div class="relative z-10">
