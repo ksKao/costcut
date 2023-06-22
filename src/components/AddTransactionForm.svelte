@@ -22,8 +22,8 @@
 			invalid_type_error: 'Invalid date',
 			required_error: 'Date is required',
 		}),
-		category: z.enum(
-			($transactionStore?.categories.map((cat) => cat.name) ?? []) as [string, ...string[]],
+		categoryId: z.enum(
+			($transactionStore?.categories.map((cat) => cat.id) ?? []) as [string, ...string[]],
 			{
 				errorMap: () => {
 					return { message: 'Invalid category' };
@@ -60,7 +60,7 @@
 		) ?? [];
 
 	const onSelectCategory = (e: Event) => {
-		category = (e as CustomEvent).detail?.selected.name ?? '';
+		category = (e as CustomEvent).detail?.selected.id ?? '';
 	};
 
 	const handleSubmit = async () => {
@@ -71,7 +71,7 @@
 			payee,
 			amount: amount ? Number(amount) : null,
 			date: `${dateArray[2]}-${dateArray[1]}-${dateArray[0]}`,
-			category,
+			categoryId: category,
 		});
 
 		if (!parsedInput.success) {
@@ -79,7 +79,7 @@
 			error.payee = parsedInput.error.flatten().fieldErrors.payee?.[0] ?? '';
 			error.amount = parsedInput.error.flatten().fieldErrors.amount?.[0] ?? '';
 			error.date = parsedInput.error.flatten().fieldErrors.date?.[0] ?? '';
-			error.category = parsedInput.error.flatten().fieldErrors.category?.[0] ?? '';
+			error.category = parsedInput.error.flatten().fieldErrors.categoryId?.[0] ?? '';
 			return;
 		}
 

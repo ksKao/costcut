@@ -17,6 +17,11 @@ export const generateFirestoreId = () => {
 	return autoId;
 };
 
+export const getCategoryNameById = (id?: string) => {
+	console.log(id);
+	return get(transactionStore)?.categories.find((c) => c.id === id)?.name;
+};
+
 export const addTransaction = async (
 	transaction: Omit<Transaction, 'id'>
 ): Promise<ResultResponse> => {
