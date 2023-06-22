@@ -8,9 +8,9 @@
 	import Transition from 'svelte-transition';
 	import toast from 'svelte-french-toast';
 	import { addTransaction } from '../lib/utils';
+	import { transactionStore } from '../stores/transaction';
 
 	const combobox = createCombobox();
-	const categories = ['Food', 'Entertainment', 'Transportation', 'Shopping', 'Other'] as const;
 	const schema = z.object({
 		description: z.string().min(1, { message: 'Description is required' }),
 		payee: z.string().min(1, { message: 'Payee is required' }),
@@ -22,7 +22,7 @@
 			invalid_type_error: 'Invalid date',
 			required_error: 'Date is required',
 		}),
-		category: z.enum(categories, {
+		category: z.enum(($transactionStore?.categories ?? []) as [string, ...string[]], {
 			errorMap: () => {
 				return { message: 'Invalid category' };
 			},
@@ -51,9 +51,10 @@
 		.replace(/^(\d\d)(\d)$/g, '$1/$2')
 		.replace(/^(\d\d\/\d\d)(\d+)$/g, '$1/$2')
 		.replace(/[^\d\/]/g, '');
-	$: filtered = categories.filter((cat) =>
-		cat.toLowerCase().includes($combobox.filter.toLowerCase())
-	);
+	$: filtered =
+		$transactionStore?.categories.filter((cat) =>
+			cat.toLowerCase().includes($combobox.filter.toLowerCase())
+		) ?? [];
 
 	const onSelectCategory = (e: Event) => {
 		category = (e as CustomEvent).detail?.selected ?? '';
@@ -145,29 +146,38 @@
 					use:combobox.items
 					class="absolute mt-2 w-full overflow-hidden rounded-md bg-base-100 p-1 shadow-md shadow-black"
 				>
-					{#each filtered as value}
-						{@const active = $combobox.active === value}
-						{@const selected = $combobox.selected === value}
-						<li
-							use:combobox.item={{ value }}
-							class={`flex w-full cursor-default items-center justify-between rounded-md p-2 ${
-								active ? 'bg-primary' : ''
-							}`}
-						>
-							<span class="max-w-[80%] flex-grow overflow-hidden overflow-ellipsis"
-								>{value}</span
+					{#if $transactionStore?.categories?.length}
+						{#each filtered as value}
+							{@const active = $combobox.active === value}
+							{@const selected = $combobox.selected === value}
+							<li
+								use:combobox.item={{ value }}
+								class={`flex w-full cursor-default items-center justify-between rounded-md p-2 ${
+									active ? 'bg-primary' : ''
+								}`}
 							>
-							{#if selected}
-								<span><Check class="h-5 w-5" /></span>
-							{/if}
-						</li>
+								<span
+									class="max-w-[80%] flex-grow overflow-hidden overflow-ellipsis"
+									>{value}</span
+								>
+								{#if selected}
+									<span><Check class="h-5 w-5" /></span>
+								{/if}
+							</li>
+						{:else}
+							<li
+								class="flex w-full cursor-default items-center justify-between rounded-md p-2"
+							>
+								No results found
+							</li>
+						{/each}
 					{:else}
 						<li
 							class="flex w-full cursor-default items-center justify-between rounded-md p-2"
 						>
-							No results found
+							No categories
 						</li>
-					{/each}
+					{/if}
 				</ul>
 			</Transition>
 		</div>

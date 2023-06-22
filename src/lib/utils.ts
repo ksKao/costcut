@@ -1,7 +1,7 @@
 import type { ResultResponse, Transaction } from './types';
 import { auth, db } from './firebase';
 import { doc, setDoc } from 'firebase/firestore';
-import { transactions } from '../stores/transaction';
+import { transactionStore } from '../stores/transaction';
 import { get } from 'svelte/store';
 
 export const generateFirestoreId = () => {
@@ -40,7 +40,7 @@ export const addTransaction = async (
 			if (currentTransactionsInLocalStorage) {
 				localStorage.setItem(
 					'transactions',
-					JSON.stringify([...(get(transactions) ?? []), transaction])
+					JSON.stringify([...(get(transactionStore)?.transactions ?? []), transaction])
 				);
 			} else {
 				localStorage.setItem('transactions', JSON.stringify([transaction]));
