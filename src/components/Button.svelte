@@ -20,6 +20,7 @@
 >
 	{#if isLoading}
 		<span class="loading loading-spinner" />
+	{:else}
+		<slot />
 	{/if}
-	<slot />
 </button>

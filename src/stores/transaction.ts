@@ -1,5 +1,5 @@
 import { derived } from 'svelte/store';
-import type { Transaction } from '../lib/types';
+import type { Category, Transaction } from '../lib/types';
 import { user } from './auth';
 import { collection, doc, onSnapshot, query } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -11,14 +11,14 @@ interface ItemInsertedEvent extends Event {
 
 interface TransactionStore {
 	transactions: Transaction[];
-	categories: string[];
+	categories: Category[];
 }
 
 export const transactionStore = derived<typeof user, TransactionStore | null>(
 	user,
 	($user, set) => {
 		let transactions: Transaction[] = [];
-		let categories: string[] = [];
+		let categories: Category[] = [];
 		if ($user === undefined) {
 			set(null);
 		} else if ($user === null) {
@@ -33,23 +33,22 @@ export const transactionStore = derived<typeof user, TransactionStore | null>(
 
 				document.dispatchEvent(event);
 
-				originalSetItem.apply(this, [...arguments] as [key: string, value: any]);
+				originalSetItem.apply(this, [...arguments] as [key: string, value: string]);
 			};
 
 			const localStorageSetHandler = (e: ItemInsertedEvent) => {
-				if (e.key === 'transactions' || e.key === 'categories') {
-					transactions = JSON.parse(localStorage.getItem('transactions') ?? '[]');
-					categories = JSON.parse(localStorage.getItem('categories') ?? '[]');
-					set({
-						transactions,
-						categories,
-					});
-				}
+				if (e.key === 'transactions') transactions = JSON.parse(e.value ?? '[]');
+				else if (e.key === 'categories') categories = JSON.parse(e.value ?? '[]');
+				set({
+					transactions,
+					categories,
+				});
 			};
 
 			document.addEventListener('localStorageChanged', localStorageSetHandler, false);
 
 			transactions = JSON.parse(localStorage.getItem('transactions') ?? '[]');
+			categories = JSON.parse(localStorage.getItem('categories') ?? '[]');
 			set({
 				transactions,
 				categories,
@@ -59,6 +58,7 @@ export const transactionStore = derived<typeof user, TransactionStore | null>(
 				document.removeEventListener('localStorageChanged', localStorageSetHandler, false);
 		} else if ($user) {
 			const transactionQuery = query(collection(db, `users/${$user.uid}/transactions`));
+			const categoryQuery = query(collection(db, `users/${$user.uid}/categories`));
 			const unsubscribeTransaction = onSnapshot(transactionQuery, (querySnapshot) => {
 				transactions = querySnapshot.docs.map((doc) => {
 					let transaction = doc.data() as Transaction;
@@ -70,16 +70,17 @@ export const transactionStore = derived<typeof user, TransactionStore | null>(
 					categories,
 				});
 			});
-			const unsubscribeCategories = onSnapshot(
-				doc(db, `users/${$user.uid}`),
-				(querySnapshot) => {
-					categories = querySnapshot.data()?.categories ?? [];
-					set({
-						transactions,
-						categories,
-					});
-				}
-			);
+			const unsubscribeCategories = onSnapshot(categoryQuery, (querySnapshot) => {
+				categories = querySnapshot.docs.map((doc) => {
+					let category = doc.data() as Category;
+					category.id = doc.id;
+					return category;
+				});
+				set({
+					transactions,
+					categories,
+				});
+			});
 			return () => {
 				unsubscribeTransaction();
 				unsubscribeCategories();

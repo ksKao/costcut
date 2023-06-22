@@ -3,6 +3,7 @@
 	import { user } from '../stores/auth';
 	import AddTransactionForm from '../components/AddTransactionForm.svelte';
 	import { transactionStore } from '../stores/transaction';
+	import ManageCategoryForm from '../components/ManageCategoryForm.svelte';
 </script>
 
 <h1>Dashboard</h1>
@@ -19,4 +20,8 @@
 <Modal key="addTransactionModal">
 	<svelte:fragment slot="button">Add Transaction</svelte:fragment>
 	<AddTransactionForm />
+</Modal>
+<Modal key="manageCategoryModal">
+	<svelte:fragment slot="button">Manage Category</svelte:fragment>
+	<ManageCategoryForm />
 </Modal>

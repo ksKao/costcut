@@ -22,11 +22,14 @@
 			invalid_type_error: 'Invalid date',
 			required_error: 'Date is required',
 		}),
-		category: z.enum(($transactionStore?.categories ?? []) as [string, ...string[]], {
-			errorMap: () => {
-				return { message: 'Invalid category' };
-			},
-		}),
+		category: z.enum(
+			($transactionStore?.categories.map((cat) => cat.name) ?? []) as [string, ...string[]],
+			{
+				errorMap: () => {
+					return { message: 'Invalid category' };
+				},
+			}
+		),
 	});
 	const emptyError = {
 		description: '',
@@ -53,11 +56,11 @@
 		.replace(/[^\d\/]/g, '');
 	$: filtered =
 		$transactionStore?.categories.filter((cat) =>
-			cat.toLowerCase().includes($combobox.filter.toLowerCase())
+			cat.name.toLowerCase().includes($combobox.filter.toLowerCase())
 		) ?? [];
 
 	const onSelectCategory = (e: Event) => {
-		category = (e as CustomEvent).detail?.selected ?? '';
+		category = (e as CustomEvent).detail?.selected.name ?? '';
 	};
 
 	const handleSubmit = async () => {
@@ -121,7 +124,7 @@
 				class={`${
 					error.category ? 'input-error' : 'input-bordered'
 				} input w-full overflow-hidden overflow-ellipsis pr-6`}
-				value={$combobox.selected}
+				value={$combobox.selected?.name ?? ''}
 				placeholder="Category"
 				id="category"
 			/>
@@ -158,7 +161,7 @@
 							>
 								<span
 									class="max-w-[80%] flex-grow overflow-hidden overflow-ellipsis"
-									>{value}</span
+									>{value.name}</span
 								>
 								{#if selected}
 									<span><Check class="h-5 w-5" /></span>
@@ -166,14 +169,14 @@
 							</li>
 						{:else}
 							<li
-								class="flex w-full cursor-default items-center justify-between rounded-md p-2"
+								class="flex w-full cursor-default items-center justify-between rounded-md p-2 text-base-content"
 							>
 								No results found
 							</li>
 						{/each}
 					{:else}
 						<li
-							class="flex w-full cursor-default items-center justify-between rounded-md p-2"
+							class="flex w-full cursor-default items-center justify-between rounded-md p-2 text-base-content"
 						>
 							No categories
 						</li>

@@ -4,8 +4,13 @@ export type Transaction = {
 	payee: string;
 	date: Date;
 	amount: number;
-	category: string;
+	category?: string;
 };
+
+export type Category = {
+	id: string,
+	name: string
+}
 
 export type ResultResponse =
 	| {

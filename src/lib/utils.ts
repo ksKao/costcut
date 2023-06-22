@@ -49,8 +49,62 @@ export const addTransaction = async (
 				success: true,
 			};
 		}
-	} catch (e: any) {
-		console.log(e?.message);
+	} catch (e) {
+		return {
+			success: false,
+			errorMessage: 'Something went wrong. Please try again later.',
+		};
+	}
+};
+
+export const addCategory = async (category: string): Promise<ResultResponse> => {
+	if (
+		get(transactionStore)?.categories.find(
+			(c) => c.name.toLowerCase() === category.toLowerCase()
+		)
+	) {
+		return {
+			success: false,
+			errorMessage: 'Category already exists.',
+		};
+	}
+	try {
+		if (auth.currentUser) {
+			if (!auth.currentUser.emailVerified)
+				return {
+					success: false,
+					errorMessage:
+						'Please verify your email first. Go to the settings page to resend the verification email.',
+				};
+			await setDoc(
+				doc(db, `users/${auth.currentUser.uid}/categories/${generateFirestoreId()}`),
+				{ name: category }
+			);
+			return {
+				success: true,
+			};
+		} else {
+			const currentCategoriesInLocalStorage = localStorage.getItem('categories');
+			if (currentCategoriesInLocalStorage) {
+				console.log(get(transactionStore)?.categories);
+				localStorage.setItem(
+					'categories',
+					JSON.stringify([
+						...(get(transactionStore)?.categories ?? []),
+						{ id: generateFirestoreId(), name: category },
+					])
+				);
+			} else {
+				localStorage.setItem(
+					'categories',
+					JSON.stringify([{ id: generateFirestoreId(), name: category }])
+				);
+			}
+			return {
+				success: true,
+			};
+		}
+	} catch (e) {
 		return {
 			success: false,
 			errorMessage: 'Something went wrong. Please try again later.',
