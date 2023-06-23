@@ -2,17 +2,16 @@
 	import Modal from '../components/Modal.svelte';
 	import { user } from '../stores/auth';
 	import AddTransactionForm from '../components/AddTransactionForm.svelte';
-	import { transactionStore } from '../stores/transaction';
+	import { transactions } from '../stores/transaction';
 	import ManageCategoryForm from '../components/ManageCategoryForm.svelte';
-	import { getCategoryNameById } from '../lib/utils';
 </script>
 
 <h1>Dashboard</h1>
 <p>{$user?.emailVerified}</p>
-{#if $transactionStore !== null}
-	{#each $transactionStore.transactions as t}
+{#if $transactions !== null}
+	{#each $transactions as t}
 		<p>
-			{t.description}, {getCategoryNameById(t.categoryId) ?? 'Uncategorized'}
+			{t.description}, {t.category?.name ?? 'Uncategorized'}
 		</p>
 	{:else}
 		<p>No transactions</p>

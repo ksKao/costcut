@@ -9,11 +9,12 @@
 	import { querystring, replace, location } from 'svelte-spa-router';
 	import PasswordReset from './pages/PasswordReset.svelte';
 	import Auth from './components/Auth.svelte';
-	import { setContext } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 	import { createDialog } from 'svelte-headlessui';
 	import { theme } from './stores/theme';
 	import { fade, scale } from 'svelte/transition';
 	import { Toaster } from 'svelte-french-toast';
+	import type { ItemInsertedEvent } from './lib/types';
 
 	const noNavbarRoutes = ['/password-reset', '/email-verification'];
 	const routes = {
@@ -28,6 +29,19 @@
 	const authModal = createDialog();
 
 	setContext('authModal', authModal);
+
+	const originalSetItem = localStorage.setItem;
+
+	localStorage.setItem = function (key, value) {
+		const event = new Event('localStorageChanged') as ItemInsertedEvent;
+
+		event.value = value;
+		event.key = key;
+
+		document.dispatchEvent(event);
+
+		originalSetItem.apply(this, [...arguments] as [key: string, value: string]);
+	};
 
 	$: {
 		const queryObject = Object.fromEntries(new URLSearchParams($querystring).entries());

@@ -1,4 +1,4 @@
-export type Transaction = {
+export type TransactionWithCategoryId = {
 	id: string;
 	description: string;
 	payee: string;
@@ -7,9 +7,18 @@ export type Transaction = {
 	categoryId?: string;
 };
 
+export type Transaction = Omit<TransactionWithCategoryId, 'categoryId'> & {
+	category?: Category;
+};
+
 export type Category = {
 	id: string;
 	name: string;
+};
+
+export type ItemInsertedEvent = Event & {
+	key?: string;
+	value?: string;
 };
 
 export type ResultResponse =

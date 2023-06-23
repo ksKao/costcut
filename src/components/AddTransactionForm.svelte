@@ -8,7 +8,7 @@
 	import Transition from 'svelte-transition';
 	import toast from 'svelte-french-toast';
 	import { addTransaction } from '../lib/utils';
-	import { transactionStore } from '../stores/transaction';
+	import { categories } from '../stores/category';
 
 	const combobox = createCombobox();
 	const schema = z.object({
@@ -22,14 +22,11 @@
 			invalid_type_error: 'Invalid date',
 			required_error: 'Date is required',
 		}),
-		categoryId: z.enum(
-			($transactionStore?.categories.map((cat) => cat.id) ?? []) as [string, ...string[]],
-			{
-				errorMap: () => {
-					return { message: 'Invalid category' };
-				},
-			}
-		),
+		categoryId: z.enum(($categories?.map((cat) => cat.id) ?? []) as [string, ...string[]], {
+			errorMap: () => {
+				return { message: 'Invalid category' };
+			},
+		}),
 	});
 	const emptyError = {
 		description: '',
@@ -55,7 +52,7 @@
 		.replace(/^(\d\d\/\d\d)(\d+)$/g, '$1/$2')
 		.replace(/[^\d\/]/g, '');
 	$: filtered =
-		$transactionStore?.categories.filter((cat) =>
+		$categories?.filter((cat) =>
 			cat.name.toLowerCase().includes($combobox.filter.toLowerCase())
 		) ?? [];
 
@@ -149,7 +146,7 @@
 					use:combobox.items
 					class="absolute mt-2 w-full overflow-hidden rounded-md bg-base-100 p-1 shadow-md shadow-black"
 				>
-					{#if $transactionStore?.categories?.length}
+					{#if $categories?.length}
 						{#each filtered as value}
 							{@const active = $combobox.active === value}
 							{@const selected = $combobox.selected === value}

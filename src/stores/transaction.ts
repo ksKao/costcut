@@ -1,91 +1,61 @@
 import { derived } from 'svelte/store';
-import type { Category, Transaction } from '../lib/types';
 import { user } from './auth';
-import { collection, doc, onSnapshot, query } from 'firebase/firestore';
+import { categories } from './category';
+import type { ItemInsertedEvent, Transaction, TransactionWithCategoryId } from '../lib/types';
 import { db } from '../lib/firebase';
+import { query, collection, onSnapshot } from 'firebase/firestore';
 
-interface ItemInsertedEvent extends Event {
-	key?: string;
-	value?: string;
-}
-
-interface TransactionStore {
-	transactions: Transaction[];
-	categories: Category[];
-}
-
-export const transactionStore = derived<typeof user, TransactionStore | null>(
-	user,
-	($user, set) => {
-		let transactions: Transaction[] = [];
-		let categories: Category[] = [];
+export const transactions = derived<[typeof user, typeof categories], Transaction[] | null>(
+	[user, categories],
+	([$user, $categories], set) => {
 		if ($user === undefined) {
 			set(null);
 		} else if ($user === null) {
-			// listen to localstorage
-			const originalSetItem = localStorage.setItem;
-
-			localStorage.setItem = function (key, value) {
-				const event: ItemInsertedEvent = new Event('localStorageChanged');
-
-				event.value = value;
-				event.key = key;
-
-				document.dispatchEvent(event);
-
-				originalSetItem.apply(this, [...arguments] as [key: string, value: string]);
-			};
-
 			const localStorageSetHandler = (e: ItemInsertedEvent) => {
-				if (e.key === 'transactions') transactions = JSON.parse(e.value ?? '[]');
-				else if (e.key === 'categories') categories = JSON.parse(e.value ?? '[]');
-				set({
-					transactions,
-					categories,
-				});
+				if (e.key === 'transactions') {
+					const localStorageTransactions: TransactionWithCategoryId[] = JSON.parse(
+						e.value ?? '[]'
+					);
+					set(
+						localStorageTransactions.map((t) => ({
+							...t,
+							category: $categories?.find((c) => c.id === t.categoryId) ?? undefined,
+						}))
+					);
+				}
 			};
+
+			const localStorageTransactions: TransactionWithCategoryId[] = JSON.parse(
+				localStorage.getItem('transactions') ?? '[]'
+			);
+			set(
+				localStorageTransactions.map((t) => ({
+					...t,
+					category: $categories?.find((c) => c.id === t.categoryId) ?? undefined,
+				}))
+			);
 
 			document.addEventListener('localStorageChanged', localStorageSetHandler, false);
-
-			transactions = JSON.parse(localStorage.getItem('transactions') ?? '[]');
-			categories = JSON.parse(localStorage.getItem('categories') ?? '[]');
-			set({
-				transactions,
-				categories,
-			});
 
 			return () =>
 				document.removeEventListener('localStorageChanged', localStorageSetHandler, false);
 		} else if ($user) {
-			const transactionQuery = query(collection(db, `users/${$user.uid}/transactions`));
-			const categoryQuery = query(collection(db, `users/${$user.uid}/categories`));
-			const unsubscribeTransaction = onSnapshot(transactionQuery, (querySnapshot) => {
-				transactions = querySnapshot.docs.map((doc) => {
-					let transaction = doc.data() as Transaction;
-					transaction.id = doc.id;
-					return transaction;
+			const q = query(collection(db, `users/${$user.uid}/transactions`));
+			const unsubscribe = onSnapshot(q, (snapshot) => {
+				const transactions: Transaction[] = snapshot.docs.map((doc) => {
+					return {
+						id: doc.id,
+						description: doc.data().description as string,
+						payee: doc.data().payee as string,
+						amount: doc.data().amount as number,
+						category:
+							$categories?.find((c) => c.id === doc.data().categoryId) ?? undefined,
+						date: doc.data().date as Date,
+					};
 				});
-				set({
-					transactions,
-					categories,
-				});
+				set(transactions);
 			});
-			const unsubscribeCategories = onSnapshot(categoryQuery, (querySnapshot) => {
-				categories = querySnapshot.docs.map((doc) => {
-					let category = doc.data() as Category;
-					category.id = doc.id;
-					return category;
-				});
-				set({
-					transactions,
-					categories,
-				});
-			});
-			return () => {
-				unsubscribeTransaction();
-				unsubscribeCategories();
-			};
+			return unsubscribe;
 		}
-	},
-	null
+	}
 );
