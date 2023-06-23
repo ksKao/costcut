@@ -18,8 +18,10 @@ export const categories = derived<typeof user, Category[] | null>(
 
 			document.addEventListener('localStorageChanged', localStorageSetHandler, false);
 
-			return () =>
+			return () => {
 				document.removeEventListener('localStorageChanged', localStorageSetHandler, false);
+				set(null);
+			};
 		} else if ($user) {
 			const q = query(collection(db, `users/${$user.uid}/categories`));
 			const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -32,7 +34,10 @@ export const categories = derived<typeof user, Category[] | null>(
 				set(categories);
 			});
 
-			return unsubscribe;
+			return () => {
+				unsubscribe();
+				set(null);
+			};
 		}
 	},
 	null

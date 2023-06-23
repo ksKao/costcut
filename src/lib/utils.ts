@@ -1,6 +1,6 @@
 import type { ResultResponse, TransactionWithCategoryId } from './types';
 import { auth, db } from './firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, query, setDoc, where, writeBatch } from 'firebase/firestore';
 import { transactions } from '../stores/transaction';
 import { get } from 'svelte/store';
 import { categories } from '../stores/category';
@@ -143,6 +143,54 @@ export const editCategory = async (
 				};
 			newCategories[indexToEdit].name = newName;
 			localStorage.setItem('categories', JSON.stringify(newCategories));
+			return {
+				success: true,
+			};
+		}
+	} catch (e) {
+		return {
+			success: false,
+			errorMessage: 'Something went wrong. Please try again later.',
+		};
+	}
+};
+
+export const deleteCategory = async (categoryId: string): Promise<ResultResponse> => {
+	try {
+		if (auth.currentUser) {
+			if (!auth.currentUser.emailVerified)
+				return {
+					success: false,
+					errorMessage:
+						'Please verify your email first. Go to the settings page to resend the verification email.',
+				};
+			const batch = writeBatch(db);
+			batch.delete(doc(db, `users/${auth.currentUser.uid}/categories/${categoryId}`));
+			const transactionsWithCategory = await getDocs(
+				query(
+					collection(db, `users/${auth.currentUser.uid}/transactions`),
+					where('category.id', '==', categoryId)
+				)
+			);
+			transactionsWithCategory.forEach((doc) => {
+				batch.update(doc.ref, {
+					category: undefined,
+				});
+			});
+			await batch.commit();
+			return {
+				success: true,
+			};
+		} else {
+			let newCategories = get(categories)?.filter((c) => c.id !== categoryId);
+			localStorage.setItem('categories', JSON.stringify(newCategories));
+			let newTransactions = get(transactions)?.map((t) => {
+				if (t.category?.id === categoryId) {
+					t.category = undefined;
+				}
+				return t;
+			});
+			localStorage.setItem('transactions', JSON.stringify(newTransactions));
 			return {
 				success: true,
 			};

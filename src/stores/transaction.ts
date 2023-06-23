@@ -37,8 +37,10 @@ export const transactions = derived<[typeof user, typeof categories], Transactio
 
 			document.addEventListener('localStorageChanged', localStorageSetHandler, false);
 
-			return () =>
+			return () => {
 				document.removeEventListener('localStorageChanged', localStorageSetHandler, false);
+				set(null);
+			};
 		} else if ($user) {
 			const q = query(collection(db, `users/${$user.uid}/transactions`));
 			const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -55,7 +57,10 @@ export const transactions = derived<[typeof user, typeof categories], Transactio
 				});
 				set(transactions);
 			});
-			return unsubscribe;
+			return () => {
+				unsubscribe();
+				set(null);
+			};
 		}
 	}
 );
