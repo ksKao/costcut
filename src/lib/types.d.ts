@@ -4,11 +4,11 @@ export type TransactionWithCategoryId = {
 	payee: string;
 	date: Date;
 	amount: number;
-	categoryId?: string;
+	categoryId: string | null;
 };
 
 export type Transaction = Omit<TransactionWithCategoryId, 'categoryId'> & {
-	category?: Category;
+	category: Category | null;
 };
 
 export type Category = {

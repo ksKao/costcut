@@ -8,8 +8,8 @@
 	import Router from 'svelte-spa-router';
 	import { querystring, replace, location } from 'svelte-spa-router';
 	import PasswordReset from './pages/PasswordReset.svelte';
-	import Auth from './components/Auth.svelte';
-	import { onMount, setContext } from 'svelte';
+	import Auth from './components/AuthForm.svelte';
+	import { setContext } from 'svelte';
 	import { createDialog } from 'svelte-headlessui';
 	import { theme } from './stores/theme';
 	import { fade, scale } from 'svelte/transition';

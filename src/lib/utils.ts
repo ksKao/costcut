@@ -1,6 +1,16 @@
 import type { ResultResponse, TransactionWithCategoryId } from './types';
 import { auth, db } from './firebase';
-import { collection, doc, getDocs, query, setDoc, where, writeBatch } from 'firebase/firestore';
+import {
+	collection,
+	deleteField,
+	doc,
+	getDocs,
+	increment,
+	query,
+	setDoc,
+	where,
+	writeBatch,
+} from 'firebase/firestore';
 import { transactions } from '../stores/transaction';
 import { get } from 'svelte/store';
 import { categories } from '../stores/category';
@@ -29,10 +39,15 @@ export const addTransaction = async (
 					errorMessage:
 						'Please verify your email first. Go to the settings page to resend the verification email.',
 				};
-			await setDoc(
+			const batch = writeBatch(db);
+			batch.set(
 				doc(db, `users/${auth.currentUser.uid}/transactions/${generateFirestoreId()}`),
 				transaction
 			);
+			batch.update(doc(db, `users/${auth.currentUser.uid}`), {
+				balance: increment(transaction.amount),
+			});
+			await batch.commit();
 			return {
 				success: true,
 			};
@@ -41,10 +56,29 @@ export const addTransaction = async (
 			if (currentTransactionsInLocalStorage) {
 				localStorage.setItem(
 					'transactions',
-					JSON.stringify([...(get(transactions) ?? []), transaction])
+					JSON.stringify([
+						...(get(transactions)?.map((t) => {
+							return {
+								id: t.id,
+								description: t.description,
+								payee: t.payee,
+								amount: t.amount,
+								categoryId: t.category?.id ?? '',
+								date: t.date,
+							};
+						}) ?? []),
+						transaction,
+					])
+				);
+				localStorage.setItem(
+					'balance',
+					(
+						parseFloat(localStorage.getItem('balance') ?? '0') + transaction.amount
+					).toString()
 				);
 			} else {
 				localStorage.setItem('transactions', JSON.stringify([transaction]));
+				localStorage.setItem('balance', transaction.amount.toString());
 			}
 			return {
 				success: true,
@@ -169,12 +203,12 @@ export const deleteCategory = async (categoryId: string): Promise<ResultResponse
 			const transactionsWithCategory = await getDocs(
 				query(
 					collection(db, `users/${auth.currentUser.uid}/transactions`),
-					where('category.id', '==', categoryId)
+					where('categoryId', '==', categoryId)
 				)
 			);
 			transactionsWithCategory.forEach((doc) => {
 				batch.update(doc.ref, {
-					category: undefined,
+					categoryId: null,
 				});
 			});
 			await batch.commit();
@@ -182,13 +216,21 @@ export const deleteCategory = async (categoryId: string): Promise<ResultResponse
 				success: true,
 			};
 		} else {
-			let newCategories = get(categories)?.filter((c) => c.id !== categoryId);
+			const categoriesStore = get(categories);
+			if (!categoriesStore) return { success: false, errorMessage: 'Something went wrong.' };
+			let newCategories = categoriesStore.filter((c) => c.id !== categoryId);
 			localStorage.setItem('categories', JSON.stringify(newCategories));
-			let newTransactions = get(transactions)?.map((t) => {
-				if (t.category?.id === categoryId) {
-					t.category = undefined;
-				}
-				return t;
+			const transactionStore = get(transactions);
+			if (!transactionStore) return { success: false, errorMessage: 'Something went wrong.' };
+			let newTransactions = transactionStore.map((t) => {
+				return {
+					id: t.id,
+					amount: t.amount,
+					date: t.date,
+					description: t.description,
+					payee: t.payee,
+					categoryId: t.category?.id === categoryId ? null : t.category?.id,
+				};
 			});
 			localStorage.setItem('transactions', JSON.stringify(newTransactions));
 			return {
