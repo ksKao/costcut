@@ -1,4 +1,4 @@
-export type TransactionWithCategoryId = {
+export type TransactionInDb = {
 	id: string;
 	description: string;
 	payee: string;
@@ -7,8 +7,9 @@ export type TransactionWithCategoryId = {
 	categoryId: string | null;
 };
 
-export type Transaction = Omit<TransactionWithCategoryId, 'categoryId'> & {
+export type Transaction = Omit<TransactionInDb, 'categoryId'> & {
 	category: Category | null;
+	balance: number;
 };
 
 export type Category = {

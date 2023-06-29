@@ -1,8 +1,7 @@
-import type { ResultResponse, TransactionWithCategoryId } from './types';
+import type { ResultResponse, Transaction, TransactionInDb } from './types';
 import { auth, db } from './firebase';
 import {
 	collection,
-	deleteField,
 	doc,
 	getDocs,
 	increment,
@@ -28,8 +27,33 @@ export const generateFirestoreId = () => {
 	return autoId;
 };
 
+export const parseLocalStorageTransactions = (localStorageValue: string | undefined) => {
+	if (!localStorageValue) return [];
+
+	const localStorageTransactions: TransactionInDb[] = JSON.parse(localStorageValue);
+	const transactions: Transaction[] = localStorageTransactions.map((t) => ({
+		...t,
+		date: new Date(t.date),
+		category: get(categories)?.find((c) => c.id === t.categoryId) ?? null,
+		balance: 0,
+	}));
+	return transactions;
+};
+
+export const recalculateBalances = (transactions: Transaction[]) => {
+	transactions = transactions.sort((a, b) => a.date.getTime() - b.date.getTime());
+	let balance = 0;
+	return transactions.map((t) => {
+		balance += t.amount;
+		return {
+			...t,
+			balance,
+		};
+	});
+};
+
 export const addTransaction = async (
-	transaction: Omit<TransactionWithCategoryId, 'id'>
+	transaction: Omit<TransactionInDb, 'id'>
 ): Promise<ResultResponse> => {
 	try {
 		if (auth.currentUser) {
@@ -44,9 +68,6 @@ export const addTransaction = async (
 				doc(db, `users/${auth.currentUser.uid}/transactions/${generateFirestoreId()}`),
 				transaction
 			);
-			batch.update(doc(db, `users/${auth.currentUser.uid}`), {
-				balance: increment(transaction.amount),
-			});
 			await batch.commit();
 			return {
 				success: true,
@@ -57,7 +78,7 @@ export const addTransaction = async (
 				localStorage.setItem(
 					'transactions',
 					JSON.stringify([
-						...(get(transactions)?.map((t) => {
+						...(get(transactions)?.transactions.map((t) => {
 							return {
 								id: t.id,
 								description: t.description,
@@ -70,15 +91,8 @@ export const addTransaction = async (
 						transaction,
 					])
 				);
-				localStorage.setItem(
-					'balance',
-					(
-						parseFloat(localStorage.getItem('balance') ?? '0') + transaction.amount
-					).toString()
-				);
 			} else {
 				localStorage.setItem('transactions', JSON.stringify([transaction]));
-				localStorage.setItem('balance', transaction.amount.toString());
 			}
 			return {
 				success: true,
@@ -222,7 +236,7 @@ export const deleteCategory = async (categoryId: string): Promise<ResultResponse
 			localStorage.setItem('categories', JSON.stringify(newCategories));
 			const transactionStore = get(transactions);
 			if (!transactionStore) return { success: false, errorMessage: 'Something went wrong.' };
-			let newTransactions = transactionStore.map((t) => {
+			let newTransactions = transactionStore.transactions.map((t) => {
 				return {
 					id: t.id,
 					amount: t.amount,

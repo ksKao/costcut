@@ -1,20 +1,19 @@
 <script lang="ts">
-	import Dashboard from './pages/Dashboard.svelte';
-	import Transactions from './pages/Transactions.svelte';
-	import Charts from './pages/Charts.svelte';
-	import Settings from './pages/Settings.svelte';
-	import Navbar from './components/Navbar.svelte';
-	import EmailVerification from './pages/EmailVerification.svelte';
-	import Router from 'svelte-spa-router';
-	import { querystring, replace, location } from 'svelte-spa-router';
-	import PasswordReset from './pages/PasswordReset.svelte';
-	import Auth from './components/AuthForm.svelte';
 	import { setContext } from 'svelte';
-	import { createDialog } from 'svelte-headlessui';
-	import { theme } from './stores/theme';
-	import { fade, scale } from 'svelte/transition';
 	import { Toaster } from 'svelte-french-toast';
+	import { createDialog } from 'svelte-headlessui';
+	import Router, { location, querystring, replace } from 'svelte-spa-router';
+	import { fade, scale } from 'svelte/transition';
+	import Auth from './components/AuthForm.svelte';
+	import Navbar from './components/Navbar.svelte';
 	import type { ItemInsertedEvent } from './lib/types';
+	import Charts from './pages/Charts.svelte';
+	import Dashboard from './pages/Dashboard.svelte';
+	import EmailVerification from './pages/EmailVerification.svelte';
+	import PasswordReset from './pages/PasswordReset.svelte';
+	import Settings from './pages/Settings.svelte';
+	import Transactions from './pages/Transactions.svelte';
+	import { theme } from './stores/theme';
 
 	const noNavbarRoutes = ['/password-reset', '/email-verification'];
 	const routes = {
@@ -88,7 +87,7 @@
 			{/if}
 		</div>
 		<Navbar>
-			<main class="flex-grow">
+			<main class="m-10 mx-20 flex-grow lg:m-10">
 				<Router {routes} />
 			</main>
 		</Navbar>

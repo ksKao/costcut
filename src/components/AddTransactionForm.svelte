@@ -144,7 +144,7 @@
 			>
 				<ul
 					use:combobox.items
-					class="absolute mt-2 w-full overflow-hidden rounded-md bg-base-100 p-1 shadow-md shadow-black"
+					class="absolute mt-2 w-full overflow-visible rounded-md bg-base-100 p-1 shadow-md shadow-black"
 				>
 					{#if $categories?.length}
 						{#each filtered as value}

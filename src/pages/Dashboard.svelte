@@ -9,7 +9,7 @@
 <h1>Dashboard</h1>
 <p>{$user?.emailVerified}</p>
 {#if $transactions !== null}
-	{#each $transactions as t}
+	{#each $transactions.transactions as t}
 		<p>
 			{t.description}, {t.category?.name ?? 'Uncategorized'}
 		</p>

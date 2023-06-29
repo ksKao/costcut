@@ -44,12 +44,13 @@
 	const authModal = getContext<ReturnType<typeof createDialog>>('authModal');
 
 	let themeButtonChecked = $theme === 'light';
+	let navToggle: HTMLInputElement;
 
 	$: $theme = themeButtonChecked ? 'light' : 'dark';
 </script>
 
 <div class="drawer lg:drawer-open">
-	<input id="navToggle" type="checkbox" class="drawer-toggle" />
+	<input id="navToggle" type="checkbox" class="drawer-toggle" bind:this={navToggle} />
 	<div class="drawer-content">
 		<slot />
 		<label
@@ -76,6 +77,9 @@
 						use:link
 						use:active={{
 							className: 'bg-primary text-white',
+						}}
+						on:click={() => {
+							navToggle.checked = false;
 						}}
 					>
 						<svelte:component this={navbarItem.icon} class="h-6 w-6" />

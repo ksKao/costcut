@@ -3,6 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
+div {
+	scrollbar-gutter: stable both-edges;
+}
+
 .btn {
 	text-transform: none;
 }
@@ -15,4 +19,19 @@
 		margin: 0;
 		-moz-appearance: textfield !important;
 	}
+}
+
+::-webkit-scrollbar {
+	width: 3px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
 }
