@@ -1,6 +1,39 @@
 <script lang="ts">
+	import { ChevronDown, ChevronUp, ChevronsUpDown, Pencil, Trash2 } from 'lucide-svelte';
 	import Pagination from '../components/Pagination.svelte';
 	import { filteredTransactions } from '../stores/transaction';
+	import { filter } from '../stores/filter';
+	import type { Transaction } from '../lib/types';
+
+	const headers: {
+		name: string;
+		sortKey: keyof Transaction;
+	}[] = [
+		{
+			name: 'Date',
+			sortKey: 'date',
+		},
+		{
+			name: 'Description',
+			sortKey: 'description',
+		},
+		{
+			name: 'Payee',
+			sortKey: 'payee',
+		},
+		{
+			name: 'Category',
+			sortKey: 'category',
+		},
+		{
+			name: 'Amount',
+			sortKey: 'amount',
+		},
+		{
+			name: 'Balance',
+			sortKey: 'balance',
+		},
+	];
 </script>
 
 <h1 class="mb-4 text-xl font-bold lg:text-2xl">Transactions</h1>
@@ -13,12 +46,33 @@
 		<table class="table-zebra table">
 			<thead>
 				<tr>
-					<th>Date</th>
-					<th>Description</th>
-					<th>Payee</th>
-					<th>Category</th>
-					<th>Amount</th>
-					<th>Balance</th>
+					{#each headers as header}
+						<th>
+							<button
+								class="flex w-full justify-between"
+								on:click={() => {
+									if ($filter.sort === header.sortKey) {
+										$filter.order = $filter.order === 'asc' ? 'desc' : 'asc';
+									} else {
+										$filter.sort = header.sortKey;
+										$filter.order = 'desc';
+									}
+								}}
+							>
+								<span>{header.name}</span>
+								{#if $filter.sort === header.sortKey}
+									{#if $filter.order === 'asc'}
+										<ChevronUp class="h-4 w-4" />
+									{:else}
+										<ChevronDown class="h-4 w-4" />
+									{/if}
+								{:else}
+									<ChevronsUpDown class="h-4 w-4" />
+								{/if}
+							</button>
+						</th>
+					{/each}
+					<th />
 				</tr>
 			</thead>
 			<tbody>
@@ -32,6 +86,10 @@
 							{transaction.amount.toFixed(2)}
 						</td>
 						<td>{transaction.balance.toFixed(2)}</td>
+						<td class="flex gap-3">
+							<button><Pencil /></button>
+							<button><Trash2 /></button>
+						</td>
 					</tr>
 				{/each}</tbody
 			>

@@ -95,6 +95,8 @@ export const filteredTransactions = derived<
 					return bigger.payee.localeCompare(smaller.payee);
 				case 'amount':
 					return bigger.amount - smaller.amount;
+				case 'balance':
+					return bigger.balance - smaller.balance;
 				default:
 					return 0;
 			}
