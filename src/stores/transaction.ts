@@ -1,7 +1,7 @@
 import { derived } from 'svelte/store';
 import { user } from './auth';
 import { categories } from './category';
-import type { ItemInsertedEvent, Transaction, TransactionInDb } from '../lib/types';
+import type { ItemInsertedEvent, Transaction } from '../lib/types';
 import { db } from '../lib/firebase';
 import { query, collection, onSnapshot, getCountFromServer, Timestamp } from 'firebase/firestore';
 import { filter } from './filter';
