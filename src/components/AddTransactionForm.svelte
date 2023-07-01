@@ -3,12 +3,13 @@
 	import { z } from 'zod';
 	import Button from './Button.svelte';
 	import Input from './Input.svelte';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { createCombobox, createDialog } from 'svelte-headlessui';
 	import Transition from 'svelte-transition';
 	import toast from 'svelte-french-toast';
-	import { addTransaction } from '../lib/utils';
+	import { addTransaction, editTransaction } from '../lib/utils';
 	import { categories } from '../stores/category';
+	import type { Transaction } from '../lib/types';
 
 	const combobox = createCombobox();
 	const schema = z.object({
@@ -36,13 +37,19 @@
 		category: '',
 	};
 
-	let description = '';
-	let payee = '';
-	let amount = '';
-	let date = '';
-	let category = '';
+	export let transaction: Transaction | undefined = undefined;
+	let description = transaction?.description ?? '';
+	let payee = transaction?.payee ?? '';
+	let amount = transaction?.amount?.toString() ?? '';
+	let date = transaction?.date
+		? `${transaction?.date.getDate()}/
+		${transaction?.date.getMonth() + 1}/
+		${transaction?.date.getFullYear()}`
+		: '';
+	let category = transaction?.category?.id ?? '';
 	let error = { ...emptyError };
 	let isLoading = false;
+	let comboboxInput: HTMLInputElement;
 
 	const addTransactionModal = getContext<ReturnType<typeof createDialog>>('addTransactionModal');
 
@@ -77,11 +84,18 @@
 			error.amount = parsedInput.error.flatten().fieldErrors.amount?.[0] ?? '';
 			error.date = parsedInput.error.flatten().fieldErrors.date?.[0] ?? '';
 			error.category = parsedInput.error.flatten().fieldErrors.categoryId?.[0] ?? '';
+			console.log(parsedInput.error);
 			return;
 		}
 
 		isLoading = true;
-		const res = await addTransaction(parsedInput.data);
+		let res;
+		if (transaction === undefined) res = await addTransaction(parsedInput.data);
+		else
+			res = await editTransaction(transaction.id, {
+				...parsedInput.data,
+				id: transaction.id,
+			});
 		isLoading = false;
 		if (res.success) {
 			toast.success('Transaction added successfully');
@@ -90,9 +104,13 @@
 			toast.error(res.errorMessage);
 		}
 	};
+
+	onMount(() => {
+		if (transaction) comboboxInput.value = transaction.category?.name ?? '';
+	});
 </script>
 
-<h1 class="mb-4 text-xl font-bold">Add Transaction</h1>
+<h1 class="mb-4 text-xl font-bold">{transaction ? 'Edit' : 'Add'} Transaction</h1>
 <form on:submit|preventDefault={handleSubmit}>
 	<Input
 		label="Description"
@@ -121,9 +139,9 @@
 				class={`${
 					error.category ? 'input-error' : 'input-bordered'
 				} input w-full overflow-hidden overflow-ellipsis pr-6`}
-				value={$combobox.selected?.name ?? ''}
 				placeholder="Category"
 				id="category"
+				bind:this={comboboxInput}
 			/>
 			<button
 				use:combobox.button
@@ -197,13 +215,14 @@
 		<Input
 			maxlength={10}
 			label="Date"
-			placeholder="DD - MM - YYYY"
+			placeholder="DD / MM / YYYY"
 			name="date"
 			id="date"
 			errorMessage={error.date}
 			bind:value={date}
 		/>
 	</div>
-
-	<Button type="submit" class="mt-4 w-full" {isLoading}>Add Transaction</Button>
+	<Button type="submit" class="mt-4 w-full" {isLoading}>
+		{transaction ? 'Edit' : 'Add'} Transaction
+	</Button>
 </form>

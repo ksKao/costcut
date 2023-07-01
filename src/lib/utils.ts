@@ -258,3 +258,51 @@ export const deleteCategory = async (categoryId: string): Promise<ResultResponse
 		};
 	}
 };
+
+export const editTransaction = async (
+	id: string,
+	transaction: TransactionInDb
+): Promise<ResultResponse> => {
+	try {
+		if (auth.currentUser) {
+			if (!auth.currentUser.emailVerified)
+				return {
+					success: false,
+					errorMessage:
+						'Please verify your email first. Go to the settings page to resend the verification email.',
+				};
+			await setDoc(doc(db, `users/${auth.currentUser.uid}/transactions/${id}`), transaction);
+			return {
+				success: true,
+			};
+		} else {
+			const localStorageTransactions: TransactionInDb[] = JSON.parse(
+				localStorage.getItem('transactions') ?? '[]'
+			);
+			if (!localStorageTransactions)
+				return {
+					success: false,
+					errorMessage: 'The transaction you are trying to edit does not exist.',
+				};
+
+			const indexToEdit = localStorageTransactions.findIndex((t) => t.id === id);
+			if (indexToEdit === undefined || indexToEdit === -1)
+				return {
+					success: false,
+					errorMessage: 'The transaction you are trying to edit does not exist.',
+				};
+			localStorageTransactions[indexToEdit] = {
+				...transaction,
+			};
+			localStorage.setItem('transactions', JSON.stringify(localStorageTransactions));
+			return {
+				success: true,
+			};
+		}
+	} catch (e) {
+		return {
+			success: false,
+			errorMessage: 'Something went wrong. Please try again later.',
+		};
+	}
+};

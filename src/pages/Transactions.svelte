@@ -4,6 +4,8 @@
 	import { filteredTransactions } from '../stores/transaction';
 	import { filter } from '../stores/filter';
 	import type { Transaction } from '../lib/types';
+	import Modal from '../components/Modal.svelte';
+	import AddTransactionForm from '../components/AddTransactionForm.svelte';
 
 	const headers: {
 		name: string;
@@ -87,7 +89,10 @@
 						</td>
 						<td>{transaction.balance.toFixed(2)}</td>
 						<td class="flex gap-3">
-							<button><Pencil /></button>
+							<Modal key="addTransactionModal" buttonClassName="h-4 w-4">
+								<Pencil slot="button" />
+								<AddTransactionForm {transaction} />
+							</Modal>
 							<button><Trash2 /></button>
 						</td>
 					</tr>

@@ -1,23 +1,17 @@
 <script lang="ts">
-	import { twMerge } from 'tailwind-merge';
 	import { createDialog } from 'svelte-headlessui';
 	import { setContext } from 'svelte';
-	import { writable } from 'svelte/store';
 	import { theme } from '../stores/theme';
 	import { fade, scale } from 'svelte/transition';
 
-	export let buttonClassName = '';
+	export let buttonClassName: string | undefined = undefined;
 	export let key;
 	const modal = createDialog();
 
 	setContext(key, modal);
 </script>
 
-<button
-	class={twMerge('btn-primary btn', buttonClassName)}
-	on:click={() => modal.open()}
-	type="button"
->
+<button class={buttonClassName || 'btn-primary btn'} on:click={() => modal.open()} type="button">
 	<slot name="button">Open Modal</slot>
 </button>
 <div class="relative z-10">
