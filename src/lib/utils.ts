@@ -74,6 +74,12 @@ export const addTransaction = async (
 			};
 		} else {
 			const currentTransactionsInLocalStorage = localStorage.getItem('transactions');
+			const newTransaction: TransactionInDb = {
+				...transaction,
+				id: generateFirestoreId(),
+			};
+			console.log(newTransaction);
+			console.log(transaction);
 			if (currentTransactionsInLocalStorage) {
 				localStorage.setItem(
 					'transactions',
@@ -88,11 +94,11 @@ export const addTransaction = async (
 								date: t.date,
 							};
 						}) ?? []),
-						transaction,
+						newTransaction,
 					])
 				);
 			} else {
-				localStorage.setItem('transactions', JSON.stringify([transaction]));
+				localStorage.setItem('transactions', JSON.stringify([newTransaction]));
 			}
 			return {
 				success: true,

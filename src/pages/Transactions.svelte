@@ -96,8 +96,8 @@
 							<button><Trash2 /></button>
 						</td>
 					</tr>
-				{/each}</tbody
-			>
+				{/each}
+			</tbody>
 		</table>
 		<div class="mx-auto my-2 w-max">
 			<Pagination />

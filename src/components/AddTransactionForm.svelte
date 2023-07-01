@@ -106,6 +106,7 @@
 	};
 
 	onMount(() => {
+		console.log(transaction);
 		if (transaction) comboboxInput.value = transaction.category?.name ?? '';
 	});
 </script>
