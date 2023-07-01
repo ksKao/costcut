@@ -84,7 +84,6 @@
 			error.amount = parsedInput.error.flatten().fieldErrors.amount?.[0] ?? '';
 			error.date = parsedInput.error.flatten().fieldErrors.date?.[0] ?? '';
 			error.category = parsedInput.error.flatten().fieldErrors.categoryId?.[0] ?? '';
-			console.log(parsedInput.error);
 			return;
 		}
 

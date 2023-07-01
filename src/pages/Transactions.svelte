@@ -6,6 +6,7 @@
 	import type { Transaction } from '../lib/types';
 	import Modal from '../components/Modal.svelte';
 	import AddTransactionForm from '../components/AddTransactionForm.svelte';
+	import ConfirmDeleteTransaction from '../components/ConfirmDeleteTransaction.svelte';
 
 	const headers: {
 		name: string;
@@ -93,7 +94,11 @@
 								<Pencil slot="button" />
 								<AddTransactionForm {transaction} />
 							</Modal>
-							<button><Trash2 /></button>
+
+							<Modal key="confirmDeleteModal" buttonClassName="h-4 w-4">
+								<Trash2 slot="button" />
+								<ConfirmDeleteTransaction transactionId={transaction.id} />
+							</Modal>
 						</td>
 					</tr>
 				{/each}

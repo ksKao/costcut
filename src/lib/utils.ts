@@ -2,9 +2,9 @@ import type { ResultResponse, Transaction, TransactionInDb } from './types';
 import { auth, db } from './firebase';
 import {
 	collection,
+	deleteDoc,
 	doc,
 	getDocs,
-	increment,
 	query,
 	setDoc,
 	where,
@@ -13,6 +13,46 @@ import {
 import { transactions } from '../stores/transaction';
 import { get } from 'svelte/store';
 import { categories } from '../stores/category';
+import type { User } from 'firebase/auth';
+
+const dbOperations = async ({
+	prefunctionCheck,
+	fireStoreOperation,
+	localStorageOperation,
+}: {
+	prefunctionCheck?: () => { success: false; errorMessage: string } | undefined;
+	fireStoreOperation: (currentUser: User) => Promise<void>;
+	localStorageOperation: () => void;
+}): Promise<ResultResponse> => {
+	if (prefunctionCheck) {
+		const prefunctionCheckResult = prefunctionCheck();
+		if (prefunctionCheckResult) return prefunctionCheckResult;
+	}
+	try {
+		if (auth.currentUser) {
+			if (!auth.currentUser.emailVerified)
+				return {
+					success: false,
+					errorMessage:
+						'Please verify your email first. Go to the settings page to resend the verification email.',
+				};
+			await fireStoreOperation(auth.currentUser);
+			return {
+				success: true,
+			};
+		} else {
+			localStorageOperation();
+			return {
+				success: true,
+			};
+		}
+	} catch (e: any) {
+		return {
+			success: false,
+			errorMessage: e?.message ?? 'Something went wrong. Please try again later.',
+		};
+	}
+};
 
 export const generateFirestoreId = () => {
 	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -55,31 +95,21 @@ export const recalculateBalances = (transactions: Transaction[]) => {
 export const addTransaction = async (
 	transaction: Omit<TransactionInDb, 'id'>
 ): Promise<ResultResponse> => {
-	try {
-		if (auth.currentUser) {
-			if (!auth.currentUser.emailVerified)
-				return {
-					success: false,
-					errorMessage:
-						'Please verify your email first. Go to the settings page to resend the verification email.',
-				};
+	return dbOperations({
+		fireStoreOperation: async (currentUser) => {
 			const batch = writeBatch(db);
 			batch.set(
-				doc(db, `users/${auth.currentUser.uid}/transactions/${generateFirestoreId()}`),
+				doc(db, `users/${currentUser.uid}/transactions/${generateFirestoreId()}`),
 				transaction
 			);
 			await batch.commit();
-			return {
-				success: true,
-			};
-		} else {
+		},
+		localStorageOperation: () => {
 			const currentTransactionsInLocalStorage = localStorage.getItem('transactions');
 			const newTransaction: TransactionInDb = {
 				...transaction,
 				id: generateFirestoreId(),
 			};
-			console.log(newTransaction);
-			console.log(transaction);
 			if (currentTransactionsInLocalStorage) {
 				localStorage.setItem(
 					'transactions',
@@ -100,41 +130,26 @@ export const addTransaction = async (
 			} else {
 				localStorage.setItem('transactions', JSON.stringify([newTransaction]));
 			}
-			return {
-				success: true,
-			};
-		}
-	} catch (e) {
-		return {
-			success: false,
-			errorMessage: 'Something went wrong. Please try again later.',
-		};
-	}
+		},
+	});
 };
 
 export const addCategory = async (category: string): Promise<ResultResponse> => {
-	if (get(categories)?.find((c) => c.name.toLowerCase() === category.toLowerCase())) {
-		return {
-			success: false,
-			errorMessage: 'Category already exists.',
-		};
-	}
-	try {
-		if (auth.currentUser) {
-			if (!auth.currentUser.emailVerified)
+	return dbOperations({
+		prefunctionCheck: () => {
+			if (get(categories)?.find((c) => c.name.toLowerCase() === category.toLowerCase())) {
 				return {
 					success: false,
-					errorMessage:
-						'Please verify your email first. Go to the settings page to resend the verification email.',
+					errorMessage: 'Category already exists.',
 				};
-			await setDoc(
-				doc(db, `users/${auth.currentUser.uid}/categories/${generateFirestoreId()}`),
-				{ name: category }
-			);
-			return {
-				success: true,
-			};
-		} else {
+			}
+		},
+		fireStoreOperation: async (currentUser) => {
+			await setDoc(doc(db, `users/${currentUser.uid}/categories/${generateFirestoreId()}`), {
+				name: category,
+			});
+		},
+		localStorageOperation: () => {
 			const currentCategoriesInLocalStorage = localStorage.getItem('categories');
 			if (currentCategoriesInLocalStorage) {
 				localStorage.setItem(
@@ -150,79 +165,48 @@ export const addCategory = async (category: string): Promise<ResultResponse> => 
 					JSON.stringify([{ id: generateFirestoreId(), name: category }])
 				);
 			}
-			return {
-				success: true,
-			};
-		}
-	} catch (e) {
-		return {
-			success: false,
-			errorMessage: 'Something went wrong. Please try again later.',
-		};
-	}
+		},
+	});
 };
 
 export const editCategory = async (
 	categoryId: string,
 	newName: string
 ): Promise<ResultResponse> => {
-	// if category doesn't exist
-	if (!get(categories)?.find((c) => c.id === categoryId)) {
-		return {
-			success: false,
-			errorMessage: 'The category you are trying to edit does not exist.',
-		};
-	}
-	try {
-		if (auth.currentUser) {
-			if (!auth.currentUser.emailVerified)
-				return {
-					success: false,
-					errorMessage:
-						'Please verify your email first. Go to the settings page to resend the verification email.',
-				};
-			await setDoc(doc(db, `users/${auth.currentUser.uid}/categories/${categoryId}`), {
-				name: newName,
-			});
-			return {
-				success: true,
-			};
-		} else {
-			let newCategories = get(categories);
-			let indexToEdit = newCategories?.findIndex((c) => c.id === categoryId);
-			if (indexToEdit === undefined || newCategories === null)
+	return dbOperations({
+		prefunctionCheck: () => {
+			// if category doesn't exist
+			if (!get(categories)?.find((c) => c.id === categoryId)) {
 				return {
 					success: false,
 					errorMessage: 'The category you are trying to edit does not exist.',
 				};
+			}
+		},
+		fireStoreOperation: async (currentUser) => {
+			await setDoc(doc(db, `users/${currentUser.uid}/categories/${categoryId}`), {
+				name: newName,
+			});
+		},
+		localStorageOperation: () => {
+			let newCategories = get(categories);
+			let indexToEdit = newCategories?.findIndex((c) => c.id === categoryId);
+			if (indexToEdit === undefined || newCategories === null)
+				throw new Error('The category you are trying to edit does not exist.');
 			newCategories[indexToEdit].name = newName;
 			localStorage.setItem('categories', JSON.stringify(newCategories));
-			return {
-				success: true,
-			};
-		}
-	} catch (e) {
-		return {
-			success: false,
-			errorMessage: 'Something went wrong. Please try again later.',
-		};
-	}
+		},
+	});
 };
 
 export const deleteCategory = async (categoryId: string): Promise<ResultResponse> => {
-	try {
-		if (auth.currentUser) {
-			if (!auth.currentUser.emailVerified)
-				return {
-					success: false,
-					errorMessage:
-						'Please verify your email first. Go to the settings page to resend the verification email.',
-				};
+	return dbOperations({
+		fireStoreOperation: async (currentUser) => {
 			const batch = writeBatch(db);
-			batch.delete(doc(db, `users/${auth.currentUser.uid}/categories/${categoryId}`));
+			batch.delete(doc(db, `users/${currentUser.uid}/categories/${categoryId}`));
 			const transactionsWithCategory = await getDocs(
 				query(
-					collection(db, `users/${auth.currentUser.uid}/transactions`),
+					collection(db, `users/${currentUser.uid}/transactions`),
 					where('categoryId', '==', categoryId)
 				)
 			);
@@ -232,10 +216,8 @@ export const deleteCategory = async (categoryId: string): Promise<ResultResponse
 				});
 			});
 			await batch.commit();
-			return {
-				success: true,
-			};
-		} else {
+		},
+		localStorageOperation: () => {
 			const categoriesStore = get(categories);
 			if (!categoriesStore) return { success: false, errorMessage: 'Something went wrong.' };
 			let newCategories = categoriesStore.filter((c) => c.id !== categoryId);
@@ -253,35 +235,19 @@ export const deleteCategory = async (categoryId: string): Promise<ResultResponse
 				};
 			});
 			localStorage.setItem('transactions', JSON.stringify(newTransactions));
-			return {
-				success: true,
-			};
-		}
-	} catch (e) {
-		return {
-			success: false,
-			errorMessage: 'Something went wrong. Please try again later.',
-		};
-	}
+		},
+	});
 };
 
 export const editTransaction = async (
 	id: string,
 	transaction: TransactionInDb
 ): Promise<ResultResponse> => {
-	try {
-		if (auth.currentUser) {
-			if (!auth.currentUser.emailVerified)
-				return {
-					success: false,
-					errorMessage:
-						'Please verify your email first. Go to the settings page to resend the verification email.',
-				};
-			await setDoc(doc(db, `users/${auth.currentUser.uid}/transactions/${id}`), transaction);
-			return {
-				success: true,
-			};
-		} else {
+	return dbOperations({
+		fireStoreOperation: async (currentUser) => {
+			await setDoc(doc(db, `users/${currentUser.uid}/transactions/${id}`), transaction);
+		},
+		localStorageOperation: () => {
 			const localStorageTransactions: TransactionInDb[] = JSON.parse(
 				localStorage.getItem('transactions') ?? '[]'
 			);
@@ -293,22 +259,29 @@ export const editTransaction = async (
 
 			const indexToEdit = localStorageTransactions.findIndex((t) => t.id === id);
 			if (indexToEdit === undefined || indexToEdit === -1)
-				return {
-					success: false,
-					errorMessage: 'The transaction you are trying to edit does not exist.',
-				};
+				throw new Error('The transaction you are trying to edit does not exist.');
 			localStorageTransactions[indexToEdit] = {
 				...transaction,
 			};
 			localStorage.setItem('transactions', JSON.stringify(localStorageTransactions));
-			return {
-				success: true,
-			};
-		}
-	} catch (e) {
-		return {
-			success: false,
-			errorMessage: 'Something went wrong. Please try again later.',
-		};
-	}
+		},
+	});
+};
+
+export const deleteTransaction = async (id: string): Promise<ResultResponse> => {
+	return dbOperations({
+		fireStoreOperation: async (currentUser) => {
+			await deleteDoc(doc(db, `users/${currentUser.uid}/transactions/${id}`));
+		},
+		localStorageOperation: () => {
+			const localStorageTransactions: TransactionInDb[] = JSON.parse(
+				localStorage.getItem('transactions') ?? '[]'
+			);
+			if (!localStorageTransactions) throw new Error('There are no transactions to delete');
+			localStorage.setItem(
+				'transactions',
+				JSON.stringify(localStorageTransactions.filter((t) => t.id !== id))
+			);
+		},
+	});
 };

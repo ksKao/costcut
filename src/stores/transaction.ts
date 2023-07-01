@@ -84,9 +84,9 @@ export const filteredTransactions = derived<
 
 			switch ($filter.sort) {
 				case 'category':
-					const aCategory = a.category?.name ?? 'Uncategorized';
-					const bCategory = b.category?.name ?? 'Uncategorized';
-					return aCategory.localeCompare(bCategory);
+					const biggerCategory = bigger.category?.name ?? 'Uncategorized';
+					const smallerCategory = smaller.category?.name ?? 'Uncategorized';
+					return biggerCategory.localeCompare(smallerCategory);
 				case 'date':
 					return bigger.date.getTime() - smaller.date.getTime();
 				case 'description':
