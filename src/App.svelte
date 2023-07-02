@@ -87,7 +87,7 @@
 			{/if}
 		</div>
 		<Navbar>
-			<main class="m-10 mx-20 flex-grow lg:m-10">
+			<main class="m-10 flex-grow">
 				<Router {routes} />
 			</main>
 		</Navbar>

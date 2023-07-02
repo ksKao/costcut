@@ -52,13 +52,16 @@
 <div class="drawer lg:drawer-open">
 	<input id="navToggle" type="checkbox" class="drawer-toggle" bind:this={navToggle} />
 	<div class="drawer-content">
+		<nav class="flex min-w-full items-center justify-between bg-base-300 px-10 py-4 lg:hidden">
+			<label for="navToggle" class="drawer-button cursor-pointer">
+				<Menu />
+			</label>
+			<a href="/" class="flex items-center justify-center gap-4" use:link>
+				<img src="/logo.png" alt="logo" class="h-10 w-10" />
+				<h1 class="text-2xl font-bold">Costcut</h1>
+			</a>
+		</nav>
 		<slot />
-		<label
-			for="navToggle"
-			class="drawer-button btn-primary btn absolute left-5 top-5 p-3 lg:hidden"
-		>
-			<Menu />
-		</label>
 	</div>
 	<nav class="drawer-side">
 		<label for="navToggle" class="drawer-overlay" />
