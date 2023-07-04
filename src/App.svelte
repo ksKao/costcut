@@ -53,7 +53,7 @@
 </script>
 
 <Toaster />
-<div class="flex">
+<div class="flex overflow-x-hidden">
 	{#if !noNavbarRoutes.includes($location)}
 		<div class="relative z-10">
 			{#if $authModal.expanded}
@@ -87,7 +87,7 @@
 			{/if}
 		</div>
 		<Navbar>
-			<main class="m-10 flex-grow">
+			<main class="max-w-[100vw] flex-grow p-10 lg:h-screen">
 				<Router {routes} />
 			</main>
 		</Navbar>

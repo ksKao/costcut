@@ -39,12 +39,12 @@
 	];
 </script>
 
-<h1 class="mb-4 text-xl font-bold lg:text-2xl">Transactions</h1>
 {#if $filteredTransactions === null}
-	<div class="flex w-full items-center justify-center">
+	<div class="flex h-full w-full items-center justify-center">
 		<span class="loading loading-spinner" />
 	</div>
 {:else}
+	<h1 class="mb-4 text-xl font-bold lg:text-2xl">Transactions</h1>
 	<div class="overflow-x-auto">
 		<table class="table-zebra table">
 			<thead>
