@@ -94,7 +94,6 @@
 								<Pencil slot="button" />
 								<AddTransactionForm {transaction} />
 							</Modal>
-
 							<Modal key="confirmDeleteModal" buttonClassName="h-4 w-4">
 								<Trash2 slot="button" />
 								<ConfirmDeleteTransaction transactionId={transaction.id} />

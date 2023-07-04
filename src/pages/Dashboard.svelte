@@ -5,6 +5,63 @@
 	import ManageCategoryForm from '../components/ManageCategoryForm.svelte';
 	import { onMount } from 'svelte';
 	import { filter } from '../stores/filter';
+	import Chart from 'chart.js/auto';
+
+	let pieChartCanvas: HTMLCanvasElement;
+	let barChartCanvas: HTMLCanvasElement;
+
+	Chart.overrides['pie'].plugins.legend.display = false;
+
+	$: pieChartCanvas &&
+		new Chart(pieChartCanvas, {
+			type: 'pie',
+			data: {
+				labels: ['Red', 'Blue', 'Yellow'],
+				datasets: [
+					{
+						data: [300, 50, 100],
+						backgroundColor: [
+							'rgb(255, 99, 132)',
+							'rgb(54, 162, 235)',
+							'rgb(255, 205, 86)',
+						],
+						hoverOffset: 4,
+					},
+				],
+			},
+			options: {
+				layout: {
+					padding: 10,
+				},
+			},
+		});
+
+	$: barChartCanvas &&
+		new Chart(barChartCanvas, {
+			type: 'bar',
+			data: {
+				labels: ['Red', 'Blue', 'Yellow'],
+				datasets: [
+					{
+						label: '',
+						data: [300, 50, 100],
+						backgroundColor: [
+							'rgb(255, 99, 132)',
+							'rgb(54, 162, 235)',
+							'rgb(255, 205, 86)',
+						],
+					},
+				],
+			},
+			options: {
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: false,
+					},
+				},
+			},
+		});
 
 	$: netIncomeThisMonth = $transactions?.transactions
 		.filter((t) => t.date.getMonth() === new Date().getMonth())
@@ -22,7 +79,7 @@
 	</div>
 {:else}
 	<div class="flex h-full flex-col gap-4 lg:flex-row-reverse">
-		<div class="flex h-full flex-col justify-between gap-6 lg:w-72 2xl:w-96">
+		<div class="flex flex-col justify-between gap-6 lg:w-72 2xl:w-96">
 			<h1 class="text-2xl font-bold lg:hidden">Dashboard</h1>
 			<div>
 				<Modal key="addTransactionModal" buttonClassName="w-full btn btn-primary my-2">
@@ -54,7 +111,10 @@
 						{netIncomeThisMonth.toFixed(2)}
 					</p>
 				</div>
-				<div class="h-96 w-full flex-grow bg-red-500">Piechart</div>
+				<div class="flex w-full flex-grow flex-col items-center justify-center">
+					<h2 class="my-4 text-center text-xl font-bold">Spendings by Categories</h2>
+					<canvas bind:this={pieChartCanvas} class="max-h-[450px] max-w-[450px]" />
+				</div>
 			{/if}
 		</div>
 		<div class="flex flex-grow flex-col justify-between gap-4">
@@ -65,32 +125,47 @@
 						You have no transactions. Add one to get started.
 					</div>
 				{:else}
-					<div class="h-200 w-full flex-grow bg-red-500">Chart</div>
+					<div class="max-h-[50vh] w-full">
+						<h2 class="text-center text-xl font-bold">Savings past 12 months</h2>
+						<canvas bind:this={barChartCanvas} class="my-6" />
+					</div>
 					<div class="max-w-[100vw] overflow-x-auto">
-						<h2 class="text-xl font-bold">Recent Transactions</h2>
-						<table class="table-zebra table max-w-full">
-							<tr>
-								<th>Date</th>
-								<th>Description</th>
-								<th>Category</th>
-								<th>Payee</th>
-								<th>Amount</th>
-								<th>Balance</th>
-							</tr>
-							{#each $filteredTransactions.slice(0, 5) as transaction}
+						<h2 class="my-2 text-xl font-bold">Recent Transactions</h2>
+						<table class="table-zebra table">
+							<thead>
 								<tr>
-									<td
-										>{new Intl.DateTimeFormat('en-UK').format(
-											transaction.date
-										)}</td
-									>
-									<td>{transaction.description}</td>
-									<td>{transaction.category?.name ?? 'Uncategorized'}</td>
-									<td>{transaction.payee}</td>
-									<td>{transaction.amount}</td>
-									<td>{transaction.balance}</td>
-								</tr>
-							{/each}
+									<th>Date</th>
+									<th>Description</th>
+									<th>Category</th>
+									<th>Payee</th>
+									<th>Amount</th>
+									<th>Balance</th>
+								</tr></thead
+							>
+							<tbody>
+								{#each $filteredTransactions.slice(0, 5) as transaction}
+									<tr>
+										<td
+											>{new Intl.DateTimeFormat('en-UK').format(
+												transaction.date
+											)}</td
+										>
+										<td>{transaction.description}</td>
+										<td>{transaction.category?.name ?? 'Uncategorized'}</td>
+										<td>{transaction.payee}</td>
+										<td
+											class={`${
+												transaction.amount > 0
+													? 'text-success'
+													: 'text-error'
+											}`}
+										>
+											{transaction.amount}
+										</td>
+										<td>{transaction.balance}</td>
+									</tr>
+								{/each}
+							</tbody>
 						</table>
 					</div>
 				{/if}
