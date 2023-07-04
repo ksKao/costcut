@@ -6,66 +6,125 @@
 	import { onMount } from 'svelte';
 	import { filter } from '../stores/filter';
 	import Chart from 'chart.js/auto';
+	import { theme } from '../stores/theme';
 
 	let pieChartCanvas: HTMLCanvasElement;
 	let barChartCanvas: HTMLCanvasElement;
+	let pieChart: Chart<'pie'>;
+	let barChart: Chart<'bar'>;
+	const spendingByCategories: { [key: string]: number } = {};
+	const savingsPast12Months: { [key: string]: number } = {};
 
 	Chart.overrides['pie'].plugins.legend.display = false;
 
-	$: pieChartCanvas &&
-		new Chart(pieChartCanvas, {
-			type: 'pie',
-			data: {
-				labels: ['Red', 'Blue', 'Yellow'],
-				datasets: [
-					{
-						data: [300, 50, 100],
-						backgroundColor: [
-							'rgb(255, 99, 132)',
-							'rgb(54, 162, 235)',
-							'rgb(255, 205, 86)',
-						],
-						hoverOffset: 4,
-					},
-				],
-			},
-			options: {
-				layout: {
-					padding: 10,
+	$: {
+		pieChart?.destroy();
+		if (pieChartCanvas) {
+			pieChart = new Chart(pieChartCanvas, {
+				type: 'pie',
+				data: {
+					labels: Object.keys(spendingByCategories),
+					datasets: [
+						{
+							data: Object.values(spendingByCategories),
+							hoverOffset: 4,
+						},
+					],
 				},
-			},
-		});
+				options: {
+					layout: {
+						padding: 10,
+					},
+				},
+			});
+		}
+	}
 
-	$: barChartCanvas &&
-		new Chart(barChartCanvas, {
-			type: 'bar',
-			data: {
-				labels: ['Red', 'Blue', 'Yellow'],
-				datasets: [
-					{
-						label: '',
-						data: [300, 50, 100],
-						backgroundColor: [
-							'rgb(255, 99, 132)',
-							'rgb(54, 162, 235)',
-							'rgb(255, 205, 86)',
-						],
+	$: {
+		barChart?.destroy();
+		if (barChartCanvas) {
+			barChart = new Chart(barChartCanvas, {
+				type: 'bar',
+				data: {
+					labels: Object.keys(savingsPast12Months),
+					datasets: [
+						{
+							backgroundColor: '#6741d9',
+							data: Object.values(savingsPast12Months),
+						},
+					],
+				},
+				options: {
+					maintainAspectRatio: false,
+					scales: {
+						x: {
+							grid: {
+								display: false,
+								drawTicks: false,
+							},
+						},
+						y: {
+							offset: true,
+							grid: {
+								color: (ctx) => {
+									if (ctx.tick.value === 0)
+										return $theme === 'dark' ? '#4b5563' : '#d1d5db';
+								},
+							},
+						},
 					},
-				],
-			},
-			options: {
-				maintainAspectRatio: false,
-				plugins: {
-					legend: {
-						display: false,
+					plugins: {
+						legend: {
+							display: false,
+						},
 					},
 				},
-			},
-		});
+			});
+		}
+	}
 
 	$: netIncomeThisMonth = $transactions?.transactions
 		.filter((t) => t.date.getMonth() === new Date().getMonth())
 		.reduce((acc, t) => acc + t.amount, 0);
+
+	$: {
+		const cutOffDate = new Date();
+		cutOffDate.setMonth(cutOffDate.getMonth() - 12);
+		cutOffDate.setDate(1);
+		const today = new Date();
+
+		// initialize savingsPast12Months to have 12 months
+		for (let i = 0; i < 12; i++) {
+			let temp = new Date();
+			temp.setMonth(temp.getMonth() - i);
+			const month = temp.toLocaleString('en-US', {
+				month: 'short',
+				year: 'numeric',
+			});
+			savingsPast12Months[month] = 0;
+		}
+
+		$transactions?.transactions.forEach((t) => {
+			// group by category
+			if (t.amount < 0) {
+				const categoryName = t?.category?.name ?? 'Uncategorized';
+				if (categoryName in spendingByCategories) {
+					spendingByCategories[categoryName] += -t.amount;
+				} else {
+					spendingByCategories[categoryName] = -t.amount;
+				}
+			}
+
+			// group by month
+			if (t.date >= cutOffDate && t.date <= today) {
+				const month = t.date.toLocaleString('en-US', {
+					month: 'short',
+					year: 'numeric',
+				});
+				savingsPast12Months[month] += t.amount;
+			}
+		});
+	}
 
 	onMount(() => {
 		$filter.order = 'desc';

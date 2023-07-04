@@ -16,16 +16,16 @@
 </script>
 
 {#if $transactions && $transactions.count > $filter.itemsPerPage}
-	<div class="join">
+	<div class="flex flex-wrap justify-center gap-1">
 		<button
-			class={`join-item btn ${currentPage === 1 ? 'btn-disabled' : ''}`}
+			class={`btn-circle btn ${currentPage === 1 ? 'btn-disabled' : ''}`}
 			on:click={() => ($filter.skip = 0)}
 			disabled={currentPage === 1}
 		>
 			<ChevronsLeft class="h-4 w-4" />
 		</button>
 		<button
-			class={`join-item btn ${currentPage === 1 ? 'btn-disabled' : ''}`}
+			class={`btn-circle btn ${currentPage === 1 ? 'btn-disabled' : ''}`}
 			on:click={() => {
 				$filter.skip -= $filter.itemsPerPage;
 			}}
@@ -35,14 +35,14 @@
 		</button>
 		{#each displayedPageNumbers as i}
 			<button
-				class={`join-item btn ${currentPage === i ? 'btn-primary' : ''}`}
+				class={`btn-circle btn ${currentPage === i ? 'btn-primary' : ''}`}
 				on:click={() => ($filter.skip = (i - 1) * $filter.itemsPerPage)}
 			>
 				{i}
 			</button>
 		{/each}
 		<button
-			class={`join-item btn ${currentPage >= numberOfPages ? 'btn-disabled' : ''}`}
+			class={`btn-circle btn ${currentPage >= numberOfPages ? 'btn-disabled' : ''}`}
 			on:click={() => {
 				$filter.skip += $filter.itemsPerPage;
 			}}
@@ -52,7 +52,7 @@
 		</button>
 
 		<button
-			class="join-item btn"
+			class="btn-circle btn"
 			on:click={() => ($filter.skip = (numberOfPages - 1) * $filter.itemsPerPage)}
 			disabled={currentPage >= numberOfPages}
 		>

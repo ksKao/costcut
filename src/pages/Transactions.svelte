@@ -103,8 +103,8 @@
 				{/each}
 			</tbody>
 		</table>
-		<div class="mx-auto my-2 w-max">
-			<Pagination />
-		</div>
+	</div>
+	<div class="mx-auto my-4 flex max-w-full justify-center overflow-x-auto">
+		<Pagination />
 	</div>
 {/if}
