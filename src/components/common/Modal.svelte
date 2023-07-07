@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createDialog } from 'svelte-headlessui';
 	import { setContext } from 'svelte';
-	import { theme } from '../stores/theme';
+	import { theme } from '../../stores/theme';
 	import { fade, scale } from 'svelte/transition';
 
 	export let buttonClassName: string | undefined = undefined;

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { ChevronDown, ChevronUp, ChevronsUpDown, Pencil, Trash2 } from 'lucide-svelte';
-	import Pagination from '../components/Pagination.svelte';
+	import Pagination from '../components/common/Pagination.svelte';
 	import { filteredTransactions } from '../stores/transaction';
 	import { filter } from '../stores/filter';
 	import type { Transaction } from '../lib/types';
-	import Modal from '../components/Modal.svelte';
+	import Modal from '../components/common/Modal.svelte';
 	import AddTransactionForm from '../components/AddTransactionForm.svelte';
 	import ConfirmDeleteTransaction from '../components/ConfirmDeleteTransaction.svelte';
 

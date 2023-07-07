@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Modal from '../components/Modal.svelte';
+	import Modal from '../components/common/Modal.svelte';
 	import AddTransactionForm from '../components/AddTransactionForm.svelte';
 	import { filteredTransactions, transactions } from '../stores/transaction';
 	import ManageCategoryForm from '../components/ManageCategoryForm.svelte';

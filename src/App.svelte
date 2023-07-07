@@ -5,7 +5,7 @@
 	import Router, { location, querystring, replace } from 'svelte-spa-router';
 	import { fade, scale } from 'svelte/transition';
 	import Auth from './components/AuthForm.svelte';
-	import Navbar from './components/Navbar.svelte';
+	import Navbar from './components/common/Navbar.svelte';
 	import type { ItemInsertedEvent } from './lib/types';
 	import Charts from './pages/Charts.svelte';
 	import Dashboard from './pages/Dashboard.svelte';

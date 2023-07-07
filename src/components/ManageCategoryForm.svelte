@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Plus, Trash2, Pencil, Check, X } from 'lucide-svelte';
-	import Button from './Button.svelte';
+	import Button from './common/Button.svelte';
 	import { addCategory, deleteCategory, editCategory } from '../lib/utils';
 	import toast from 'svelte-french-toast';
 	import { categories } from '../stores/category';

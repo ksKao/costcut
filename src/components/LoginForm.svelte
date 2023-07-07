@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { AuthErrorCodes, signInWithEmailAndPassword } from 'firebase/auth';
-	import Button from './Button.svelte';
-	import Input from './Input.svelte';
+	import Button from './common/Button.svelte';
+	import Input from './common/Input.svelte';
 	import { z } from 'zod';
 	import { auth } from '../lib/firebase';
 	import { FirebaseError } from 'firebase/app';

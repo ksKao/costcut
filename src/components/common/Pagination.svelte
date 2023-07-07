@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-svelte';
-	import { filter } from '../stores/filter';
-	import { transactions } from '../stores/transaction';
+	import { filter } from '../../stores/filter';
+	import { transactions } from '../../stores/transaction';
 
 	const displayedPageNumbers: number[] = [];
 

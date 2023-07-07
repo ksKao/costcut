@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { querystring, replace } from 'svelte-spa-router';
 	import { firebaseConfig } from '../lib/firebase';
-	import Input from '../components/Input.svelte';
-	import Button from '../components/Button.svelte';
+	import Input from '../components/common/Input.svelte';
+	import Button from '../components/common/Button.svelte';
 	import { z } from 'zod';
 	import { AlertCircle } from 'lucide-svelte';
 

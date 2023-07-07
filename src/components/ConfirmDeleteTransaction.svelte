@@ -1,7 +1,7 @@
 <script lang="ts">
 	import toast from 'svelte-french-toast';
 	import { deleteTransaction } from '../lib/utils';
-	import Button from './Button.svelte';
+	import Button from './common/Button.svelte';
 	import { getContext } from 'svelte';
 	import type { createDialog } from 'svelte-headlessui';
 

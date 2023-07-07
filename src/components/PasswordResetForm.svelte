@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { AlertCircle } from 'lucide-svelte';
-	import Button from './Button.svelte';
-	import Input from './Input.svelte';
+	import Button from './common/Button.svelte';
+	import Input from './common/Input.svelte';
 	import { getContext } from 'svelte';
 	import { z } from 'zod';
 	import { AuthErrorCodes, sendPasswordResetEmail } from 'firebase/auth';

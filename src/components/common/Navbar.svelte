@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { user } from '../stores/auth';
+	import { user } from '../../stores/auth';
 	import { signOut } from 'firebase/auth';
-	import { auth } from '../lib/firebase';
+	import { auth } from '../../lib/firebase';
 	import {
 		LayoutDashboard,
 		ArrowRightLeft,
@@ -12,7 +12,7 @@
 		Moon,
 		Menu,
 	} from 'lucide-svelte';
-	import { theme } from '../stores/theme';
+	import { theme } from '../../stores/theme';
 	import { link } from 'svelte-spa-router';
 	import active from 'svelte-spa-router/active';
 	import { getContext } from 'svelte';

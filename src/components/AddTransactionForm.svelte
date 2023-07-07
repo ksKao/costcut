@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { ChevronDown, Check } from 'lucide-svelte';
 	import { z } from 'zod';
-	import Button from './Button.svelte';
-	import Input from './Input.svelte';
+	import Button from './common/Button.svelte';
+	import Input from './common/Input.svelte';
 	import { getContext, onMount } from 'svelte';
 	import { createCombobox, createDialog } from 'svelte-headlessui';
 	import Transition from 'svelte-transition';
