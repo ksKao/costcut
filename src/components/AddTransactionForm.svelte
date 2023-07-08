@@ -97,7 +97,9 @@
 			});
 		isLoading = false;
 		if (res.success) {
-			toast.success('Transaction added successfully');
+			toast.success(
+				`Transaction ${transaction === undefined ? 'added' : 'updated'} successfully`
+			);
 			addTransactionModal.close();
 		} else {
 			toast.error(res.errorMessage);
@@ -105,7 +107,6 @@
 	};
 
 	onMount(() => {
-		console.log(transaction);
 		if (transaction) comboboxInput.value = transaction.category?.name ?? '';
 	});
 </script>
