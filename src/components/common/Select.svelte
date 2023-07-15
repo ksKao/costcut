@@ -33,20 +33,20 @@
 	>
 		<ul
 			use:listbox.items
-			class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+			class={`absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-base-200 p-1 text-base-content shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`}
 		>
 			{#each values as value}
 				{@const active = $listbox.active === value}
 				{@const selected = $listbox.selected === value}
 				<li
-					class="relative cursor-default select-none py-2 pl-10 pr-4 {active
+					class="relative cursor-default select-none rounded-md py-2 pl-10 pr-4 {active
 						? 'bg-primary text-primary-content'
-						: 'text-gray-900'}"
+						: 'text-base-content'}"
 					use:listbox.item={{ value }}
 				>
-					<span class="block truncate {selected ? 'font-medium' : 'font-normal'}"
-						>{value}</span
-					>
+					<span class="block truncate {selected ? 'font-medium' : 'font-normal'}">
+						{value}
+					</span>
 					{#if selected}
 						<span
 							class={`absolute inset-y-0 left-0 flex items-center pl-3 ${

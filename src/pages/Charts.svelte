@@ -1,6 +1,7 @@
 <script lang="ts">
+	import ChartWrapper from '../components/ChartWrapper.svelte';
 	import SpendingByCategoryChart from '../components/charts/SpendingByCategoryChart.svelte';
-	import { transactions } from '../stores/transaction';
+	import { filteredTransactions, transactions } from '../stores/transaction';
 </script>
 
 {#if $transactions == null}
@@ -14,8 +15,8 @@
 {:else}
 	<h1 class="mb-4 text-2xl font-bold">Charts</h1>
 	<div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
-		<div class="h-fit rounded-md border-2 border-gray-500 p-4 lg:rounded-lg">
-			<SpendingByCategoryChart />
-		</div>
+		<ChartWrapper let:filteredTransactions title="Spending By Category">
+			<SpendingByCategoryChart {filteredTransactions} />
+		</ChartWrapper>
 	</div>
 {/if}

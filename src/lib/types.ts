@@ -7,6 +7,15 @@ export type TransactionInDb = {
 	categoryId: string | null;
 };
 
+export const filterDateRange = [
+	'All Time',
+	'Past 12 Months',
+	'Past 6 Months',
+	'Past Month',
+	'Past Week',
+] as const;
+export type FilterDateRange = (typeof filterDateRange)[number];
+
 export type Transaction = Omit<TransactionInDb, 'categoryId'> & {
 	category: Category | null;
 	balance: number;
