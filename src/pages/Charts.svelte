@@ -1,7 +1,8 @@
 <script lang="ts">
 	import ChartWrapper from '../components/ChartWrapper.svelte';
+	import BalanceOverTimeChart from '../components/charts/BalanceOverTimeChart.svelte';
 	import SpendingByCategoryChart from '../components/charts/SpendingByCategoryChart.svelte';
-	import { filteredTransactions, transactions } from '../stores/transaction';
+	import { transactions } from '../stores/transaction';
 </script>
 
 {#if $transactions == null}
@@ -15,8 +16,11 @@
 {:else}
 	<h1 class="mb-4 text-2xl font-bold">Charts</h1>
 	<div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
-		<ChartWrapper let:filteredTransactions title="Spending By Category">
+		<ChartWrapper let:filteredTransactions title="Spending By Category" hasAllTime>
 			<SpendingByCategoryChart {filteredTransactions} />
+		</ChartWrapper>
+		<ChartWrapper let:selectedDateRange title="Balance Over Time">
+			<BalanceOverTimeChart {selectedDateRange} />
 		</ChartWrapper>
 	</div>
 {/if}

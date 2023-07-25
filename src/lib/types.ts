@@ -11,7 +11,7 @@ export const filterDateRange = [
 	'All Time',
 	'Past 12 Months',
 	'Past 6 Months',
-	'Past Month',
+	'Past 30 Days',
 	'Past Week',
 ] as const;
 export type FilterDateRange = (typeof filterDateRange)[number];

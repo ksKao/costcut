@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Chart } from 'chart.js';
 	import type { Transaction } from '../../lib/types';
+	import { onDestroy, onMount } from 'svelte';
 
 	let pieChartCanvas: HTMLCanvasElement;
 	let pieChart: Chart<'pie'>;
@@ -28,6 +29,8 @@
 					layout: {
 						padding: 10,
 					},
+					// maintainAspectRatio: false,
+					// responsive: false,
 				},
 			});
 		}
@@ -43,6 +46,18 @@
 			}
 		});
 	}
+
+	const onResize = () => {
+		pieChart.resize();
+	};
+
+	onMount(() => {
+		addEventListener('resize', onResize);
+	});
+	1;
+	onDestroy(() => {
+		removeEventListener('resize', onResize);
+	});
 </script>
 
-<canvas bind:this={pieChartCanvas} class="m-auto max-w-full" />
+<canvas bind:this={pieChartCanvas} class="m-auto h-[40vh] max-h-[40vh] max-w-full" />

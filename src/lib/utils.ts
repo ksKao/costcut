@@ -1,4 +1,4 @@
-import type { ResultResponse, Transaction, TransactionInDb } from './types';
+import type { FilterDateRange, ResultResponse, Transaction, TransactionInDb } from './types';
 import { auth, db } from './firebase';
 import {
 	collection,
@@ -10,7 +10,7 @@ import {
 	where,
 	writeBatch,
 } from 'firebase/firestore';
-import { transactions } from '../stores/transaction';
+import { filteredTransactions, transactions } from '../stores/transaction';
 import { get } from 'svelte/store';
 import { categories } from '../stores/category';
 import type { User } from 'firebase/auth';
@@ -90,6 +90,37 @@ export const recalculateBalances = (transactions: Transaction[]) => {
 			balance,
 		};
 	});
+};
+
+export const groupFilteredTransactionsByDate = (
+	filteredTransactions: Transaction[],
+	dateRange: FilterDateRange
+) => {
+	let grouped: { date: string; transactions: Transaction[] }[] = [];
+	const now = new Date();
+	const dateMonthFormatter = new Intl.DateTimeFormat('en-UK', {
+		month: 'short',
+		year: 'numeric',
+	});
+
+	switch (dateRange) {
+		case 'Past 12 Months':
+			for (let i = 0; i < 12; i++) {
+				const newDate = new Date();
+				newDate.setMonth(now.getMonth() - i);
+				grouped.push({
+					date: dateMonthFormatter.format(newDate),
+					transactions: filteredTransactions.filter(
+						(t) =>
+							t.date.getMonth() == newDate.getMonth() &&
+							t.date.getFullYear() == newDate.getFullYear()
+					),
+				});
+			}
+			break;
+	}
+
+	return grouped;
 };
 
 export const addTransaction = async (

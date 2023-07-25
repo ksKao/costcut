@@ -204,11 +204,11 @@
 							<tbody>
 								{#each $filteredTransactions.slice(0, 5) as transaction}
 									<tr>
-										<td
-											>{new Intl.DateTimeFormat('en-UK').format(
+										<td>
+											{new Intl.DateTimeFormat('en-UK').format(
 												transaction.date
-											)}</td
-										>
+											)}
+										</td>
 										<td>{transaction.description}</td>
 										<td>{transaction.category?.name ?? 'Uncategorized'}</td>
 										<td>{transaction.payee}</td>
