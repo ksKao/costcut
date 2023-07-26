@@ -43,7 +43,7 @@
 			<span class="text-2xl">No data available.</span>
 		</div>
 	{:else}
-		<div class="h-[40vh] max-h-[40vh] max-w-full">
+		<div class="h-[35vh] max-h-[35vh] max-w-full">
 			<slot {filteredTransactions} {selectedDateRange} />
 		</div>
 	{/if}

@@ -102,18 +102,41 @@ export const groupFilteredTransactionsByDate = (
 		month: 'short',
 		year: 'numeric',
 	});
+	const dateDayFormatter = new Intl.DateTimeFormat('en-UK', {
+		day: 'numeric',
+		month: 'short',
+	});
 
 	switch (dateRange) {
 		case 'Past 12 Months':
-			for (let i = 0; i < 12; i++) {
+		case 'Past 6 Months':
+			const numberOfMonths = dateRange === 'Past 12 Months' ? 12 : 6;
+			for (let i = 0; i < numberOfMonths; i++) {
 				const newDate = new Date();
 				newDate.setMonth(now.getMonth() - i);
 				grouped.push({
 					date: dateMonthFormatter.format(newDate),
 					transactions: filteredTransactions.filter(
 						(t) =>
-							t.date.getMonth() == newDate.getMonth() &&
-							t.date.getFullYear() == newDate.getFullYear()
+							t.date.getMonth() === newDate.getMonth() &&
+							t.date.getFullYear() === newDate.getFullYear()
+					),
+				});
+			}
+			break;
+		case 'Past 30 Days':
+		case 'Past Week':
+			const numberOfDays = dateRange === 'Past 30 Days' ? 30 : 7;
+			for (let i = 0; i < numberOfDays; i++) {
+				const newDate = new Date();
+				newDate.setDate(now.getDate() - i);
+				grouped.push({
+					date: dateDayFormatter.format(newDate),
+					transactions: filteredTransactions.filter(
+						(t) =>
+							t.date.getDate() === newDate.getDate() &&
+							t.date.getMonth() === newDate.getMonth() &&
+							t.date.getFullYear() === newDate.getFullYear()
 					),
 				});
 			}

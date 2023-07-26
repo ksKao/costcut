@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ChartWrapper from '../components/ChartWrapper.svelte';
 	import BalanceOverTimeChart from '../components/charts/BalanceOverTimeChart.svelte';
+	import IncomeVsExpense from '../components/charts/IncomeVsExpense.svelte';
 	import SpendingByCategoryChart from '../components/charts/SpendingByCategoryChart.svelte';
 	import { transactions } from '../stores/transaction';
 </script>
@@ -21,6 +22,9 @@
 		</ChartWrapper>
 		<ChartWrapper let:selectedDateRange title="Balance Over Time">
 			<BalanceOverTimeChart {selectedDateRange} />
+		</ChartWrapper>
+		<ChartWrapper let:filteredTransactions let:selectedDateRange title="Income Vs Expense">
+			<IncomeVsExpense {filteredTransactions} {selectedDateRange} />
 		</ChartWrapper>
 	</div>
 {/if}
