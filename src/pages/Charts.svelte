@@ -17,14 +17,24 @@
 {:else}
 	<h1 class="mb-4 text-2xl font-bold">Charts</h1>
 	<div class="grid grid-cols-1 gap-2 lg:grid-cols-2">
-		<ChartWrapper let:filteredTransactions title="Spending By Category" hasAllTime>
-			<SpendingByCategoryChart {filteredTransactions} />
+		<ChartWrapper
+			let:filteredTransactions
+			let:chartWrapper
+			title="Spending By Category"
+			hasAllTime
+		>
+			<SpendingByCategoryChart {filteredTransactions} {chartWrapper} />
 		</ChartWrapper>
-		<ChartWrapper let:selectedDateRange title="Balance Over Time">
-			<BalanceOverTimeChart {selectedDateRange} />
+		<ChartWrapper let:selectedDateRange let:chartWrapper title="Balance Over Time">
+			<BalanceOverTimeChart {selectedDateRange} {chartWrapper} />
 		</ChartWrapper>
-		<ChartWrapper let:filteredTransactions let:selectedDateRange title="Income Vs Expense">
-			<IncomeVsExpense {filteredTransactions} {selectedDateRange} />
+		<ChartWrapper
+			let:filteredTransactions
+			let:selectedDateRange
+			let:chartWrapper
+			title="Income Vs Expense"
+		>
+			<IncomeVsExpense {filteredTransactions} {selectedDateRange} {chartWrapper} />
 		</ChartWrapper>
 	</div>
 {/if}

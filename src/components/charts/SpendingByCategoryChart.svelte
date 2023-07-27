@@ -8,6 +8,7 @@
 	const spendingByCategories: { [key: string]: number } = {};
 
 	export let filteredTransactions: Transaction[];
+	export let chartWrapper: HTMLDivElement;
 
 	Chart.overrides['pie'].plugins.legend.display = false;
 
@@ -48,13 +49,14 @@
 	}
 
 	const onResize = () => {
-		pieChart.resize();
+		pieChartCanvas.width = chartWrapper.clientWidth;
+		pieChartCanvas.height = chartWrapper.clientHeight;
 	};
 
 	onMount(() => {
 		addEventListener('resize', onResize);
 	});
-	1;
+
 	onDestroy(() => {
 		removeEventListener('resize', onResize);
 	});

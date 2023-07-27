@@ -2,6 +2,7 @@
 	import { Chart } from 'chart.js';
 	import type { FilterDateRange, Transaction } from '../../lib/types';
 	import { transactions } from '../../stores/transaction';
+	import { onDestroy, onMount } from 'svelte';
 
 	const balanceOverTime: { date: string; balance: number }[] = [];
 	const now = new Date();
@@ -18,6 +19,7 @@
 	let lineChart: Chart<'line'>;
 
 	export let selectedDateRange: FilterDateRange = 'Past Week';
+	export let chartWrapper: HTMLDivElement;
 
 	const calculateBalance = (date: Date, interval: 'month' | 'day'): number => {
 		if (!$transactions) return 0;
@@ -107,6 +109,19 @@
 			});
 		}
 	}
+
+	const onResize = () => {
+		lineChartCanvas.width = chartWrapper.clientWidth;
+		lineChartCanvas.height = chartWrapper.clientHeight;
+	};
+
+	onMount(() => {
+		addEventListener('resize', onResize);
+	});
+	1;
+	onDestroy(() => {
+		removeEventListener('resize', onResize);
+	});
 </script>
 
 <canvas bind:this={lineChartCanvas} class="m-auto h-full w-full max-w-full" />

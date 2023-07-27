@@ -7,6 +7,7 @@
 	export let hasAllTime: boolean = false;
 	let filteredTransactions: Transaction[] = [];
 	let selectedDateRange: FilterDateRange = filterDateRange[hasAllTime ? 0 : 1];
+	let chartWrapper: HTMLDivElement;
 
 	$: {
 		filteredTransactions =
@@ -43,8 +44,8 @@
 			<span class="text-2xl">No data available.</span>
 		</div>
 	{:else}
-		<div class="h-[35vh] max-h-[35vh] max-w-full">
-			<slot {filteredTransactions} {selectedDateRange} />
+		<div class="h-[35vh] max-h-[35vh] max-w-full" bind:this={chartWrapper}>
+			<slot {filteredTransactions} {selectedDateRange} {chartWrapper} />
 		</div>
 	{/if}
 </div>

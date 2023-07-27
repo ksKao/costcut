@@ -2,6 +2,7 @@
 	import { Chart } from 'chart.js';
 	import type { Transaction, FilterDateRange } from '../../lib/types';
 	import { groupFilteredTransactionsByDate } from '../../lib/utils';
+	import { onDestroy, onMount } from 'svelte';
 
 	let incomeVsExpense: {
 		date: string;
@@ -13,6 +14,7 @@
 
 	export let selectedDateRange: FilterDateRange;
 	export let filteredTransactions: Transaction[];
+	export let chartWrapper: HTMLDivElement;
 
 	$: {
 		incomeVsExpense = groupFilteredTransactionsByDate(
@@ -77,6 +79,19 @@
 
 		return { max: maxValue, min: minValue };
 	}
+
+	const onResize = () => {
+		barChartCanvas.width = chartWrapper.clientWidth;
+		barChartCanvas.height = chartWrapper.clientHeight;
+	};
+
+	onMount(() => {
+		addEventListener('resize', onResize);
+	});
+
+	onDestroy(() => {
+		removeEventListener('resize', onResize);
+	});
 </script>
 
 <canvas bind:this={barChartCanvas} class="m-auto h-full w-full max-w-full" />
