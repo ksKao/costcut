@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Chart } from 'chart.js';
 	import type { Transaction, FilterDateRange } from '../../lib/types';
-	import { groupFilteredTransactionsByDate } from '../../lib/utils';
 	import { onDestroy, onMount } from 'svelte';
+	import { groupFilteredTransactionsByDate } from '../../lib/utils';
 
 	let incomeVsExpense: {
 		date: string;
@@ -60,7 +60,7 @@
 		}
 	}
 
-	function calculateMinMaxYAxisValues() {
+	const calculateMinMaxYAxisValues = () => {
 		let maxIncome = -Infinity;
 		let minExpense = Infinity;
 
@@ -78,7 +78,7 @@
 		const minValue = Math.min(minExpense, -maxIncome);
 
 		return { max: maxValue, min: minValue };
-	}
+	};
 
 	const onResize = () => {
 		barChartCanvas.width = chartWrapper.clientWidth;

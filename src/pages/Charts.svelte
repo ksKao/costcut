@@ -3,6 +3,7 @@
 	import BalanceOverTimeChart from '../components/charts/BalanceOverTimeChart.svelte';
 	import IncomeVsExpense from '../components/charts/IncomeVsExpense.svelte';
 	import SpendingByCategoryChart from '../components/charts/SpendingByCategoryChart.svelte';
+	import StackedCategories from '../components/charts/StackedCategories.svelte';
 	import { transactions } from '../stores/transaction';
 </script>
 
@@ -35,6 +36,14 @@
 			title="Income Vs Expense"
 		>
 			<IncomeVsExpense {filteredTransactions} {selectedDateRange} {chartWrapper} />
+		</ChartWrapper>
+		<ChartWrapper
+			let:filteredTransactions
+			let:selectedDateRange
+			let:chartWrapper
+			title="Spending By Category Over Time"
+		>
+			<StackedCategories {filteredTransactions} {selectedDateRange} {chartWrapper} />
 		</ChartWrapper>
 	</div>
 {/if}
