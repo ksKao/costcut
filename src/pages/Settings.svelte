@@ -1,12 +1,20 @@
 <script lang="ts">
 	import toast from 'svelte-french-toast';
 	import Button from '../components/common/Button.svelte';
-	import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
+	import {
+		EmailAuthProvider,
+		reauthenticateWithCredential,
+		updatePassword,
+		updateProfile,
+	} from 'firebase/auth';
 	import { user } from '../stores/auth';
+	import { auth } from '../lib/firebase';
 
 	let newPassword = '';
 	let currentPassword = '';
+	let username = $user?.displayName ?? $user?.email?.split('@')[0] ?? '';
 	let changePasswordLoading = false;
+	let changeUsernameLoading = false;
 
 	const changePassword = async () => {
 		if (!newPassword || !$user) return;
@@ -39,11 +47,30 @@
 			changePasswordLoading = false;
 		}
 	};
+
+	const changeUsername = async () => {
+		if (!$user) return;
+		if (username === '') return;
+		if (username === $user?.displayName || username === $user?.email?.split('@')[0]) return;
+
+		try {
+			changeUsernameLoading = true;
+			await updateProfile($user, {
+				displayName: username,
+			});
+			user.reload();
+			toast.success('Your username has been updated.');
+		} catch (e) {
+			toast.error('Something went wront. Please try again later.');
+		} finally {
+			changeUsernameLoading = false;
+		}
+	};
 </script>
 
 <h1 class="mb-4 text-xl font-bold lg:text-2xl">Settings</h1>
 
-<h2 class="mb-4 text-lg font-semibold lg:text-xl">Change Password</h2>
+<h2 class="mb-2 text-lg font-semibold lg:text-xl">Change Password</h2>
 <form on:submit|preventDefault={changePassword}>
 	<div class="form-control mb-2">
 		<label class="label" for="currentPassword">
@@ -70,6 +97,24 @@
 				bind:value={newPassword}
 			/>
 			<Button isLoading={changePasswordLoading}>Change</Button>
+		</div>
+	</div>
+</form>
+<h2 class="mb-2 mt-6 text-lg font-semibold lg:text-xl">Change Username</h2>
+<form on:submit|preventDefault={changeUsername}>
+	<div class="form-control">
+		<label class="label" for="username">
+			<span class="label-text">Username</span>
+		</label>
+		<div class="flex gap-4">
+			<input
+				placeholder="Username"
+				id="username"
+				type="text"
+				class="input-bordered input w-[300px] max-w-[300px]"
+				bind:value={username}
+			/>
+			<Button isLoading={changeUsernameLoading}>Change</Button>
 		</div>
 	</div>
 </form>

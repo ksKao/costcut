@@ -11,6 +11,9 @@ const createUserStore = () => {
 
 	return {
 		subscribe,
+		reload: () => {
+			set(auth.currentUser);
+		},
 	};
 };
 
