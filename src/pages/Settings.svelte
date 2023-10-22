@@ -7,10 +7,8 @@
 		sendEmailVerification,
 		updatePassword,
 		updateProfile,
-		type User,
 	} from 'firebase/auth';
 	import { user } from '../stores/auth';
-	import { auth } from '../lib/firebase';
 
 	let newPassword = '';
 	let currentPassword = '';
@@ -64,7 +62,7 @@
 			user.reload();
 			toast.success('Your username has been updated.');
 		} catch (e) {
-			toast.error('Something went wront. Please try again later.');
+			toast.error('Something went wrong. Please try again later.');
 		} finally {
 			changeUsernameLoading = false;
 		}
@@ -149,8 +147,8 @@
 	{#if $user.emailVerified}
 		<p>Your email has been verified.</p>
 	{:else}
-		<Button on:click={sendVerificationEmail} isLoading={verifyEmailLoading}
-			>Send Verification Email</Button
-		>
+		<Button on:click={sendVerificationEmail} isLoading={verifyEmailLoading}>
+			Send Verification Email
+		</Button>
 	{/if}
 {/if}
