@@ -46,11 +46,11 @@
 			barChart = new Chart(barChartCanvas, {
 				type: 'bar',
 				data: {
-					labels: Object.keys(savingsPast12Months),
+					labels: Object.keys(savingsPast12Months).reverse(),
 					datasets: [
 						{
 							backgroundColor: '#6741d9',
-							data: Object.values(savingsPast12Months),
+							data: Object.values(savingsPast12Months).reverse(),
 						},
 					],
 				},
@@ -84,7 +84,11 @@
 	}
 
 	$: netIncomeThisMonth = $transactions?.transactions
-		.filter((t) => t.date.getMonth() === new Date().getMonth())
+		.filter(
+			(t) =>
+				t.date.getMonth() === new Date().getMonth() &&
+				t.date.getFullYear() === new Date().getFullYear()
+		)
 		.reduce((acc, t) => acc + t.amount, 0);
 
 	$: {
@@ -137,7 +141,7 @@
 		<span class="loading loading-spinner" />
 	</div>
 {:else}
-	<div class="flex h-full flex-col gap-4 lg:flex-row-reverse">
+	<div class="flex h-full flex-col gap-4 overflow-x-scroll lg:flex-row-reverse">
 		<div class="flex flex-col justify-between gap-6 lg:w-72 2xl:w-96">
 			<h1 class="text-2xl font-bold lg:hidden">Dashboard</h1>
 			<div>

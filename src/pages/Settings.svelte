@@ -92,6 +92,10 @@
 	<div class="flex h-full w-full items-center justify-center">
 		<h1>Login to access your settings.</h1>
 	</div>
+{:else if $user.email === import.meta.env.VITE_EXAMPLE_ACCOUNT_EMAIL}
+	<div class="flex h-full w-full items-center justify-center">
+		<h1>Not available for example account.</h1>
+	</div>
 {:else}
 	<h1 class="mb-4 text-xl font-bold lg:text-2xl">Settings</h1>
 

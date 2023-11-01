@@ -29,6 +29,7 @@
 	let error = { ...emptyError };
 
 	export let switchTabToPasswordReset: () => void;
+	export let switchTabToExampleAccount: () => void;
 
 	const handleSubmit = async () => {
 		error = { ...emptyError };
@@ -120,4 +121,9 @@
 		</button>
 	</Input>
 	<Button class="mt-6 w-full" {isLoading}>Login</Button>
+	<div class="mt-4 flex justify-center">
+		<button class="link-primary link" type="button" on:click={switchTabToExampleAccount}>
+			Login as Example User
+		</button>
+	</div>
 </form>

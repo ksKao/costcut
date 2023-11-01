@@ -8,8 +8,12 @@ export const categories: Category[] = [
 	'Utility',
 	'Retail',
 	'Entertainment',
+	'Health',
+	'Finance',
 	'Income',
+	'Pets',
 	'Education',
+	'Travel',
 	'Others',
 ].map((c) => {
 	return {
@@ -20,6 +24,24 @@ export const categories: Category[] = [
 
 const getCategoryIdByName = (categoryName: string) => {
 	return categories.find((c) => c.name.toLowerCase() === categoryName.toLowerCase())?.id ?? null;
+};
+
+export const generateRandomDate = () => {
+	const currentDate = new Date();
+	const pastDate = new Date();
+
+	// Set the date 12 months ago from the current date
+	pastDate.setMonth(currentDate.getMonth() - 12);
+
+	// Generate a random number of milliseconds between now and 12 months ago
+	const randomMilliseconds = Math.floor(
+		Math.random() * (currentDate.getTime() - pastDate.getTime())
+	);
+
+	// Set the random date by adding the random milliseconds to the past date
+	const randomDate = new Date(pastDate.getTime() + randomMilliseconds);
+
+	return randomDate;
 };
 
 export const demoData: Omit<TransactionInDb, 'id' | 'date'>[] = [
@@ -431,7 +453,7 @@ export const demoData: Omit<TransactionInDb, 'id' | 'date'>[] = [
 	{
 		description: 'Charity Fundraiser',
 		amount: -50,
-		categoryId: getCategoryIdByName('Charity'),
+		categoryId: getCategoryIdByName('Others'),
 		payee: 'Helping Hands Foundation',
 	},
 

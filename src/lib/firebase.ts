@@ -3,12 +3,12 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 export const firebaseConfig = {
-	apiKey: 'AIzaSyAGIzl0awfd6hFOJ1qE6YgXd55PhrpgeYc',
-	authDomain: 'costcut-82305.firebaseapp.com',
-	projectId: 'costcut-82305',
-	storageBucket: 'costcut-82305.appspot.com',
-	messagingSenderId: '211141510102',
-	appId: '1:211141510102:web:c70d47ab29b3fef0b19a77',
+	apiKey: import.meta.env.VITE_API_KEY,
+	authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+	projectId: import.meta.env.VITE_PROJECT_ID,
+	storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+	messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+	appId: import.meta.env.VITE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);

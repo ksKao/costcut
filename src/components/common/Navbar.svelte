@@ -17,6 +17,7 @@
 	import active from 'svelte-spa-router/active';
 	import { getContext } from 'svelte';
 	import { createDialog } from 'svelte-headlessui';
+	import { object } from 'zod';
 
 	const navbarItems = [
 		{
@@ -110,8 +111,8 @@
 								{$user.displayName ?? $user.email?.split('@')[0] ?? 'User'}
 							</span>
 							<button
-								on:click={() => {
-									signOut(auth);
+								on:click={async () => {
+									await signOut(auth);
 								}}
 								class="btn-circle btn"
 							>
