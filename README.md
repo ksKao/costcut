@@ -1,47 +1,19 @@
-# Svelte + TS + Vite
+# Costcut
+Costcut is a budgeting app that helps you take control of your finances and save money without sacrificing the things you love. With easy-to-use tools and features, Costcut helps you track your expenses, create a budget, and identify areas where you can cut costs. Whether you're trying to pay off debt, save for a big purchase, or simply manage your money more effectively, Costcut has got you covered. Start taking control of your finances today with Costcut!
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+## Features
+1. **Effortless Transaction Management**: Add, edit, and delete transactions seamlessly, ensuring your financial records are always up-to-date.
+2. **Intuitive Category Organization**: Organize transactions into various categories, providing a clear overview of your spending patterns and habits.
+3. **Visualize Your Finances**: Dynamic charts offer insightful visualizations, allowing you to understand precisely where your money is going and make informed decisions.
+4. **Flexible Sorting Options**: Explore your finances with ease using our paginated table view, which allows sorting transactions by different fields, empowering you with customizable insights.
+5. **Optional Account Creation**: Creating an account is entirely optional. For non-logged in users, data is securely stored in local storage, ensuring privacy while still enjoying the full functionality of the app.
+6. **Expanded Feature Set**: Explore a multitude of additional features designed to enhance your financial management experience, tailored to meet your unique needs and preferences.
+7. **Adaptive Theme Support**: Seamlessly switch between light and dark modes based on your preferences or the time of day.
 
-## Recommended IDE Setup
+## Screenshots
+![image](https://github.com/ksKao/costcut/assets/71765166/ac7d115c-bdb8-4910-b027-5a8d7a739a75)
+![image](https://github.com/ksKao/costcut/assets/71765166/4cc917de-cc6c-44e4-8951-fce969e68642)
+![image](https://github.com/ksKao/costcut/assets/71765166/5fd40719-272a-427b-a137-eafbd9a63267)
+![image](https://github.com/ksKao/costcut/assets/71765166/cf9149dc-3c95-4ac9-b933-ba003bcbc603)
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
 
-## Need an official Svelte framework?
-
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
-
-## Technical considerations
-
-**Why use this over SvelteKit?**
-
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
-
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
-
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
-
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
-
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
-
-**Why include `.vscode/extensions.json`?**
-
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
-
-**Why enable `allowJs` in the TS template?**
-
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
-```
