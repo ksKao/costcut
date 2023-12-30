@@ -31,7 +31,7 @@
 	}
 </script>
 
-<div class="flex h-fit min-h-[40vh] flex-col rounded-md border-2 border-gray-500 p-4 lg:rounded-lg">
+<div class="flex h-full flex-col rounded-md border-2 border-gray-500 p-4 lg:rounded-lg">
 	<div class="flex w-full justify-between">
 		<h2 class="text-xl font-semibold">{title}</h2>
 		<Select

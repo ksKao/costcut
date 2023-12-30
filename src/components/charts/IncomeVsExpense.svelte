@@ -55,6 +55,7 @@
 					scales: {
 						y: { ...calculateMinMaxYAxisValues() },
 					},
+					maintainAspectRatio: false,
 				},
 			});
 		}

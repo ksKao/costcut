@@ -30,6 +30,9 @@
 						$categories
 					),
 				},
+				options: {
+					maintainAspectRatio: false,
+				},
 			});
 		}
 	}

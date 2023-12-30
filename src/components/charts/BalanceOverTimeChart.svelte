@@ -103,6 +103,7 @@
 					layout: {
 						padding: 10,
 					},
+					maintainAspectRatio: false,
 				},
 			});
 		}
