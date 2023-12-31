@@ -33,7 +33,7 @@
 	>
 		<ul
 			use:listbox.items
-			class={`absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-base-200 p-1 text-base-content shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`}
+			class={`absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-base-200 p-1 text-base-content shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm`}
 		>
 			{#each values as value}
 				{@const active = $listbox.active === value}

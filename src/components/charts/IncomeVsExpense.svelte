@@ -95,4 +95,10 @@
 	});
 </script>
 
-<canvas bind:this={barChartCanvas} class="m-auto h-full w-full max-w-full" />
+{#if filteredTransactions.length === 0}
+	<div class="flex min-h-full min-w-full flex-grow items-center justify-center">
+		<span class="text-2xl">No data available.</span>
+	</div>
+{:else}
+	<canvas bind:this={barChartCanvas} class="m-auto h-full w-full max-w-full" />
+{/if}

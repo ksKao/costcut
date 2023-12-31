@@ -3,7 +3,7 @@
 	import AddTransactionForm from '../components/AddTransactionForm.svelte';
 	import { filteredTransactions, transactions } from '../stores/transaction';
 	import ManageCategoryForm from '../components/ManageCategoryForm.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { filter } from '../stores/filter';
 	import Chart from 'chart.js/auto';
 	import { theme } from '../stores/theme';
@@ -130,9 +130,24 @@
 		});
 	}
 
+	let barChartWrapper: HTMLDivElement;
+	let pieChartWrapper: HTMLDivElement;
+
 	onMount(() => {
 		$filter.order = 'desc';
 		$filter.sort = 'date';
+		addEventListener('resize', onResize);
+	});
+
+	const onResize = () => {
+		barChartCanvas.width = barChartWrapper.clientWidth;
+		barChartCanvas.height = barChartWrapper.clientHeight;
+		pieChartCanvas.width = pieChartWrapper.clientWidth;
+		pieChartCanvas.height = pieChartWrapper.clientHeight;
+	};
+
+	onDestroy(() => {
+		removeEventListener('resize', onResize);
 	});
 </script>
 
@@ -141,8 +156,10 @@
 		<span class="loading loading-spinner" />
 	</div>
 {:else}
-	<div class="flex h-full flex-col gap-4 overflow-x-scroll lg:flex-row-reverse">
-		<div class="flex flex-col justify-between gap-6 lg:w-72 2xl:w-96">
+	<div
+		class="flex h-full max-w-full flex-col flex-wrap gap-4 overflow-x-scroll md:flex-row-reverse"
+	>
+		<div class="flex max-w-full flex-col justify-between gap-6 md:w-72 md:flex-grow">
 			<h1 class="text-2xl font-bold lg:hidden">Dashboard</h1>
 			<div>
 				<Modal key="addTransactionModal" buttonClassName="w-full btn btn-primary my-2">
@@ -174,13 +191,16 @@
 						{netIncomeThisMonth.toFixed(2)}
 					</p>
 				</div>
-				<div class="flex w-full flex-grow flex-col items-center justify-center">
+				<div
+					class="flex w-full flex-grow flex-col items-center justify-center"
+					bind:this={pieChartWrapper}
+				>
 					<h2 class="my-4 text-center text-xl font-bold">Spendings by Categories</h2>
 					<canvas bind:this={pieChartCanvas} class="max-h-[450px] max-w-[450px]" />
 				</div>
 			{/if}
 		</div>
-		<div class="flex flex-grow flex-col justify-between gap-4">
+		<div class="flex max-w-full flex-grow flex-col justify-between gap-4">
 			<h1 class="hidden text-2xl font-bold lg:block">Dashboard</h1>
 			{#if $transactions !== null}
 				{#if $transactions.transactions.length === 0}
@@ -188,7 +208,7 @@
 						You have no transactions. Add one to get started.
 					</div>
 				{:else}
-					<div class="max-h-[50vh] w-full">
+					<div class="max-h-[50vh] w-full" bind:this={barChartWrapper}>
 						<h2 class="text-center text-xl font-bold">Savings past 12 months</h2>
 						<canvas bind:this={barChartCanvas} class="my-6" />
 					</div>

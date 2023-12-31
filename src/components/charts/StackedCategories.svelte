@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import {
-		filterDateRange,
-		type Category,
-		type FilterDateRange,
-		type Transaction,
-	} from '../../lib/types';
+	import { type Category, type FilterDateRange, type Transaction } from '../../lib/types';
 	import { categories } from '../../stores/category';
 	import { Chart } from 'chart.js';
 	import { groupFilteredTransactionsByDate } from '../../lib/utils';
@@ -18,12 +13,12 @@
 	let lineChartCanvas: HTMLCanvasElement;
 
 	$: {
+		filteredTransactions = filteredTransactions.filter((t) => t.amount < 0);
 		stackedLineChart?.destroy();
 		if (lineChartCanvas && $categories) {
 			stackedLineChart = new Chart(lineChartCanvas, {
 				type: 'line',
 				data: {
-					// labels: groupedFilteredTransactions.map((t) => t.date),
 					labels: getDateLabels(selectedDateRange),
 					datasets: groupFilteredTransactionsByCategories(
 						filteredTransactions,
@@ -120,4 +115,10 @@
 	});
 </script>
 
-<canvas bind:this={lineChartCanvas} class="m-auto h-full w-full max-w-full" />
+{#if filteredTransactions.length === 0}
+	<div class="flex min-h-full min-w-full flex-grow items-center justify-center">
+		<span class="text-2xl">No data available.</span>
+	</div>
+{:else}
+	<canvas bind:this={lineChartCanvas} class="m-auto h-full w-full max-w-full" />
+{/if}

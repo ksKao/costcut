@@ -38,6 +38,7 @@
 	}
 
 	$: {
+		filteredTransactions = filteredTransactions.filter((t) => t.amount < 0);
 		filteredTransactions.forEach((transaction) => {
 			const categoryName = transaction.category?.name ?? 'Uncategorized';
 			if (categoryName in spendingByCategories) {
@@ -62,4 +63,10 @@
 	});
 </script>
 
-<canvas bind:this={pieChartCanvas} class="m-auto h-[40vh] max-h-[40vh] max-w-full" />
+{#if filteredTransactions.length === 0}
+	<div class="flex min-h-full min-w-full flex-grow items-center justify-center">
+		<span class="text-2xl">No data available.</span>
+	</div>
+{:else}
+	<canvas bind:this={pieChartCanvas} class="m-auto h-[40vh] max-h-[40vh] max-w-full" />
+{/if}

@@ -12,7 +12,6 @@
 	$: {
 		filteredTransactions =
 			$transactions?.transactions.filter((transaction) => {
-				if (transaction.amount >= 0) return false;
 				if (selectedDateRange === 'All Time') {
 					return true;
 				} else if (transaction.date > new Date()) return false;
@@ -31,7 +30,7 @@
 	}
 </script>
 
-<div class="flex h-full flex-col rounded-md border-2 border-gray-500 p-4 lg:rounded-lg">
+<div class="flex h-fit min-h-full flex-col rounded-md border-2 border-gray-500 p-4 lg:rounded-lg">
 	<div class="flex w-full justify-between">
 		<h2 class="text-xl font-semibold">{title}</h2>
 		<Select
@@ -39,13 +38,7 @@
 			values={hasAllTime ? [...filterDateRange] : filterDateRange.slice(1)}
 		/>
 	</div>
-	{#if filteredTransactions.length == 0}
-		<div class="flex min-h-full min-w-full flex-grow items-center justify-center">
-			<span class="text-2xl">No data available.</span>
-		</div>
-	{:else}
-		<div class="h-[35vh] max-h-[35vh] max-w-full" bind:this={chartWrapper}>
-			<slot {filteredTransactions} {selectedDateRange} {chartWrapper} />
-		</div>
-	{/if}
+	<div class="h-[35vh] max-h-[35vh] max-w-full" bind:this={chartWrapper}>
+		<slot {filteredTransactions} {selectedDateRange} {chartWrapper} />
+	</div>
 </div>

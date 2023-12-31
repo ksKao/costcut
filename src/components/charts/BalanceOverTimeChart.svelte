@@ -117,10 +117,15 @@
 	onMount(() => {
 		addEventListener('resize', onResize);
 	});
-	1;
 	onDestroy(() => {
 		removeEventListener('resize', onResize);
 	});
 </script>
 
-<canvas bind:this={lineChartCanvas} class="m-auto h-full w-full max-w-full" />
+{#if $transactions?.count === 0}
+	<div class="flex min-h-full min-w-full flex-grow items-center justify-center">
+		<span class="text-2xl">No data available.</span>
+	</div>
+{:else}
+	<canvas bind:this={lineChartCanvas} class="m-auto h-full w-full max-w-full" />
+{/if}

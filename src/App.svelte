@@ -87,7 +87,7 @@
 			{/if}
 		</div>
 		<Navbar>
-			<main class="max-w-[100vw] flex-grow overflow-y-auto p-10 lg:h-screen">
+			<main class="max-w-[100vw] flex-grow overflow-y-auto p-9 lg:h-screen">
 				<Router {routes} />
 			</main>
 		</Navbar>
